@@ -1,0 +1,33 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { INDUSTRIES } from '../../lib/constants';
+---
+
+<BaseLayout
+  title="Industry Marketing Guides"
+  description="Tailored growth marketing strategies for real estate, SaaS, e-commerce, healthcare, fintech, professional services, logistics, and hospitality."
+>
+  <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
+    <div class="max-w-2xl mb-10">
+      <h1 class="font-serif text-3xl sm:text-4xl font-bold text-[var(--color-text)] mb-3">Industry Marketing Guides</h1>
+      <p class="text-lg text-[var(--color-text-muted)]">
+        Generic marketing advice rarely works. Our industry-specific playbooks are built for your sector's unique buyers, regulations, and competitive dynamics.
+      </p>
+    </div>
+    <div class="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      {INDUSTRIES.map(ind => (
+        <a
+          href={`/industries/${ind.slug}`}
+          class="card-hover group flex flex-col gap-4 p-6 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] hover:border-[var(--color-brand)] transition-colors"
+        >
+          <span class="text-4xl" aria-hidden="true">{ind.icon}</span>
+          <div>
+            <h2 class="font-serif font-semibold text-[var(--color-text)] group-hover:text-[var(--color-brand)] transition-colors mb-1">{ind.label}</h2>
+            <p class="text-sm text-[var(--color-text-muted)]">{ind.description}</p>
+          </div>
+          <span class="mt-auto text-sm font-medium text-[var(--color-brand)]">Explore →</span>
+        </a>
+      ))}
+    </div>
+  </div>
+</BaseLayout>

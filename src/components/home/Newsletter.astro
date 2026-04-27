@@ -1,0 +1,109 @@
+---
+interface Props {
+  variant?: 'inline' | 'full';
+}
+
+const { variant = 'inline' } = Astro.props;
+---
+
+<div
+  class:list={[
+    "rounded-2xl",
+    variant === 'full'
+      ? "gradient-brand p-8 sm:p-12 text-white"
+      : "border border-[var(--color-border)] bg-[var(--color-surface-2)] p-6 sm:p-8",
+  ]}
+>
+  <div class="max-w-2xl mx-auto text-center">
+    <p class:list={["text-sm font-semibold uppercase tracking-wider mb-2", variant === 'full' ? "text-white/70" : "text-[var(--color-brand)]"]}>
+      Newsletter
+    </p>
+    <h2 class:list={["font-serif text-2xl sm:text-3xl font-bold mb-3", variant === 'full' ? "text-white" : "text-[var(--color-text)]"]}>
+      Growth tactics, straight to your inbox
+    </h2>
+    <p class:list={["mb-6 leading-relaxed", variant === 'full' ? "text-white/80" : "text-[var(--color-text-muted)]"]}>
+      Join 12,000+ marketers and business owners. One email per week, packed with actionable strategies — no fluff.
+    </p>
+
+    <form
+      id="newsletter-form"
+      class="flex flex-col sm:flex-row gap-3 max-w-md mx-auto"
+      aria-label="Newsletter signup"
+      novalidate
+    >
+      <label for="newsletter-email" class="sr-only">Email address</label>
+      <input
+        id="newsletter-email"
+        type="email"
+        name="email"
+        required
+        placeholder="you@company.com"
+        autocomplete="email"
+        class:list={[
+          "flex-1 px-4 py-2.5 rounded-xl text-sm border focus:outline-none focus:ring-2 focus:ring-[var(--color-brand)]",
+          variant === 'full'
+            ? "bg-white/20 border-white/30 text-white placeholder-white/60"
+            : "bg-[var(--color-surface)] border-[var(--color-border)] text-[var(--color-text)] placeholder-[var(--color-text-muted)]",
+        ]}
+        aria-required="true"
+      />
+      <button
+        type="submit"
+        class:list={[
+          "px-5 py-2.5 rounded-xl text-sm font-semibold transition-opacity hover:opacity-90 whitespace-nowrap",
+          variant === 'full'
+            ? "bg-white text-[var(--color-brand)]"
+            : "bg-[var(--color-brand)] text-white",
+        ]}
+      >
+        Subscribe Free
+      </button>
+    </form>
+
+    <p class:list={["mt-3 text-xs", variant === 'full' ? "text-white/60" : "text-[var(--color-text-muted)]"]}>
+      No spam. Unsubscribe anytime. We respect your privacy.
+    </p>
+
+    <p id="newsletter-status" role="status" aria-live="polite" class="mt-2 text-sm hidden"></p>
+  </div>
+</div>
+
+<script>
+  const form = document.getElementById('newsletter-form') as HTMLFormElement | null;
+  const status = document.getElementById('newsletter-status');
+
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const email = (form.elements.namedItem('email') as HTMLInputElement).value;
+    const btn = form.querySelector('button[type="submit"]') as HTMLButtonElement;
+
+    btn.disabled = true;
+    btn.textContent = 'Subscribing…';
+
+    try {
+      const res = await fetch('/api/subscribe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+
+      if (res.ok) {
+        form.reset();
+        if (status) {
+          status.textContent = '🎉 You\'re subscribed! Check your inbox for a confirmation.';
+          status.className = 'mt-2 text-sm text-green-600';
+        }
+      } else {
+        throw new Error('Failed');
+      }
+    } catch {
+      if (status) {
+        status.textContent = 'Something went wrong. Please try again.';
+        status.className = 'mt-2 text-sm text-red-500';
+      }
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Subscribe Free';
+    }
+  });
+</script>

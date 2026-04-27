@@ -1,0 +1,85 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { formatDate } from '../../utils/seo';
+import { NICHES } from '../../lib/constants';
+
+interface Props {
+  post: CollectionEntry<'blog'>;
+  featured?: boolean;
+}
+
+const { post, featured = false } = Astro.props;
+const { id, data } = post;
+const niche = NICHES.find(n => n.slug === data.niche);
+const url = `/blog/${id}`;
+---
+
+<article
+  class:list={[
+    "card-hover group flex flex-col rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] overflow-hidden",
+    featured ? "md:flex-row" : "",
+  ]}
+  itemscope
+  itemtype="https://schema.org/BlogPosting"
+>
+  {data.image && (
+    <a
+      href={url}
+      class:list={["block overflow-hidden bg-[var(--color-surface-2)] flex-shrink-0", featured ? "md:w-2/5" : "aspect-video"]}
+      tabindex="-1"
+      aria-hidden="true"
+    >
+      <img
+        src={data.image}
+        alt={data.imageAlt ?? data.title}
+        class:list={["w-full h-full object-cover transition-transform duration-300 group-hover:scale-105", featured ? "h-64 md:h-full" : "h-full"]}
+        loading="lazy"
+        decoding="async"
+        width="800"
+        height="450"
+        itemprop="image"
+      />
+    </a>
+  )}
+
+  <div class="flex flex-col flex-1 p-5 sm:p-6">
+    <!-- Niche badge -->
+    {niche && (
+      <a
+        href={`/niches/${niche.slug}`}
+        class="self-start mb-3 inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-[var(--color-surface-2)] text-[var(--color-brand)] border border-[var(--color-border)] hover:border-[var(--color-brand)] transition-colors"
+      >
+        <span aria-hidden="true">{niche.icon}</span>
+        {niche.label}
+      </a>
+    )}
+
+    <!-- Title -->
+    <h2 class:list={["font-serif font-semibold leading-snug group-hover:text-[var(--color-brand)] transition-colors", featured ? "text-2xl" : "text-lg"]} itemprop="headline">
+      <a href={url} class="focus-visible:outline-none focus-visible:text-[var(--color-brand)]">
+        {data.title}
+      </a>
+    </h2>
+
+    <!-- Description -->
+    <p class="mt-2 text-sm text-[var(--color-text-muted)] line-clamp-2 flex-1" itemprop="description">
+      {data.description}
+    </p>
+
+    <!-- Meta -->
+    <div class="mt-4 flex items-center justify-between text-xs text-[var(--color-text-muted)]">
+      <div class="flex items-center gap-2">
+        <span itemprop="author" itemscope itemtype="https://schema.org/Person">
+          <span itemprop="name">{data.author}</span>
+        </span>
+        <span aria-hidden="true">·</span>
+        <time datetime={data.publishDate.toISOString()} itemprop="datePublished">
+          {formatDate(data.publishDate)}
+        </time>
+      </div>
+      {data.readingTime && (
+        <span>{data.readingTime} min read</span>
+      )}
+    </div>
+  </div>
+</article>

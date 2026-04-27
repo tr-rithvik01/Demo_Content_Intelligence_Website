@@ -1,0 +1,48 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { NICHES } from '../lib/constants';
+---
+
+<BaseLayout
+  title="Page Not Found"
+  description="The page you're looking for doesn't exist. Explore our blog, resources, and niche guides."
+  noindex
+>
+  <div class="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 py-20 text-center">
+    <p class="font-serif text-8xl font-bold text-[var(--color-brand)] mb-4" aria-hidden="true">404</p>
+    <h1 class="font-serif text-2xl sm:text-3xl font-bold text-[var(--color-text)] mb-3">Page not found</h1>
+    <p class="text-[var(--color-text-muted)] mb-8">
+      That URL doesn't exist — it may have moved or been deleted. Here are some places to explore instead:
+    </p>
+
+    <div class="flex flex-wrap justify-center gap-3 mb-10">
+      <a href="/" class="px-4 py-2 rounded-xl bg-[var(--color-brand)] text-white text-sm font-medium hover:opacity-90 transition-opacity">
+        Home
+      </a>
+      <a href="/blog" class="px-4 py-2 rounded-xl border border-[var(--color-border)] text-sm font-medium text-[var(--color-text-muted)] hover:text-[var(--color-text)] hover:bg-[var(--color-surface-2)] transition-colors">
+        Blog
+      </a>
+      <a href="/resources" class="px-4 py-2 rounded-xl border border-[var(--color-border)] text-sm font-medium text-[var(--color-text-muted)] hover:text-[var(--color-text)] hover:bg-[var(--color-surface-2)] transition-colors">
+        Resources
+      </a>
+      <a href="/search" class="px-4 py-2 rounded-xl border border-[var(--color-border)] text-sm font-medium text-[var(--color-text-muted)] hover:text-[var(--color-text)] hover:bg-[var(--color-surface-2)] transition-colors">
+        Search
+      </a>
+    </div>
+
+    <div class="text-left">
+      <h2 class="font-serif text-lg font-semibold text-[var(--color-text)] mb-4 text-center">Explore our marketing channels</h2>
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        {NICHES.map(n => (
+          <a
+            href={`/niches/${n.slug}`}
+            class="flex flex-col items-center gap-1 p-3 rounded-xl border border-[var(--color-border)] hover:border-[var(--color-brand)] transition-colors text-center"
+          >
+            <span class="text-2xl" aria-hidden="true">{n.icon}</span>
+            <span class="text-xs font-medium text-[var(--color-text-muted)]">{n.label}</span>
+          </a>
+        ))}
+      </div>
+    </div>
+  </div>
+</BaseLayout>

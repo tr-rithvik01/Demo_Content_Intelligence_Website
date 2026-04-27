@@ -1,0 +1,239 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import AuthorBio from '../components/blog/AuthorBio.astro';
+import TableOfContents from '../components/blog/TableOfContents.astro';
+import ArticleCard from '../components/blog/ArticleCard.astro';
+import Newsletter from '../components/home/Newsletter.astro';
+import { NICHES } from '../lib/constants';
+import { formatDate, formatDateISO } from '../utils/seo';
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  post: CollectionEntry<'blog'>;
+  relatedPosts: CollectionEntry<'blog'>[];
+  headings: { depth: number; text: string; slug: string }[];
+}
+
+const { post, relatedPosts, headings } = Astro.props;
+const { data } = post;
+const niche = NICHES.find(n => n.slug === data.niche);
+
+const articleSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: data.title,
+  description: data.description,
+  datePublished: formatDateISO(data.publishDate),
+  dateModified: formatDateISO(data.updatedDate ?? data.publishDate),
+  author: {
+    '@type': 'Person',
+    name: data.author,
+  },
+  publisher: {
+    '@type': 'Organization',
+    name: 'GrowthMarketing Hub',
+    logo: { '@type': 'ImageObject', url: 'https://growthmarketinghub.com/logo.svg' },
+  },
+  ...(data.image ? { image: data.image.startsWith('http') ? data.image : `https://growthmarketinghub.com${data.image}` } : {}),
+};
+
+const breadcrumbSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://growthmarketinghub.com' },
+    { '@type': 'ListItem', position: 2, name: 'Blog', item: 'https://growthmarketinghub.com/blog' },
+    { '@type': 'ListItem', position: 3, name: data.title, item: `https://growthmarketinghub.com/blog/${post.id}` },
+  ],
+};
+---
+
+<BaseLayout
+  title={data.title}
+  description={data.description}
+  image={data.image}
+  imageAlt={data.imageAlt}
+  canonical={data.canonicalUrl}
+  type="article"
+  publishDate={data.publishDate}
+  updatedDate={data.updatedDate}
+  author={data.author}
+  jsonLd={[articleSchema, breadcrumbSchema]}
+  showReadingProgress
+>
+  <!-- Hero image -->
+  {data.image && (
+    <div class="w-full max-h-96 overflow-hidden bg-[var(--color-surface-2)]">
+      <img
+        src={data.image}
+        alt={data.imageAlt ?? data.title}
+        class="w-full h-96 object-cover"
+        width="1200"
+        height="630"
+        loading="eager"
+        fetchpriority="high"
+      />
+    </div>
+  )}
+
+  <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10">
+    <!-- Breadcrumb -->
+    <nav aria-label="Breadcrumb" class="mb-6">
+      <ol class="flex items-center gap-2 text-sm text-[var(--color-text-muted)]" role="list">
+        <li><a href="/" class="hover:text-[var(--color-brand)] transition-colors">Home</a></li>
+        <li aria-hidden="true">›</li>
+        <li><a href="/blog" class="hover:text-[var(--color-brand)] transition-colors">Blog</a></li>
+        <li aria-hidden="true">›</li>
+        {niche && (
+          <>
+            <li><a href={`/niches/${niche.slug}`} class="hover:text-[var(--color-brand)] transition-colors">{niche.label}</a></li>
+            <li aria-hidden="true">›</li>
+          </>
+        )}
+        <li class="text-[var(--color-text)] font-medium truncate max-w-xs" aria-current="page">{data.title}</li>
+      </ol>
+    </nav>
+
+    <div class="lg:grid lg:grid-cols-[1fr_320px] lg:gap-12">
+      <!-- Main content -->
+      <article itemscope itemtype="https://schema.org/BlogPosting">
+        <!-- Header -->
+        <header class="mb-8">
+          {niche && (
+            <a href={`/niches/${niche.slug}`} class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-[var(--color-surface-2)] text-[var(--color-brand)] border border-[var(--color-border)] mb-4 hover:border-[var(--color-brand)] transition-colors">
+              <span aria-hidden="true">{niche.icon}</span> {niche.label}
+            </a>
+          )}
+
+          <h1 class="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-[var(--color-text)] leading-tight mb-4" itemprop="headline">
+            {data.title}
+          </h1>
+
+          <p class="text-lg text-[var(--color-text-muted)] mb-6" itemprop="description">{data.description}</p>
+
+          <div class="flex flex-wrap items-center gap-4 text-sm text-[var(--color-text-muted)] pb-6 border-b border-[var(--color-border)]">
+            <span itemprop="author" itemscope itemtype="https://schema.org/Person">
+              By <span class="font-medium text-[var(--color-text)]" itemprop="name">{data.author}</span>
+            </span>
+            <span aria-hidden="true">·</span>
+            <time datetime={data.publishDate.toISOString()} itemprop="datePublished">
+              {formatDate(data.publishDate)}
+            </time>
+            {data.updatedDate && (
+              <>
+                <span aria-hidden="true">·</span>
+                <span>Updated <time datetime={data.updatedDate.toISOString()} itemprop="dateModified">{formatDate(data.updatedDate)}</time></span>
+              </>
+            )}
+            {data.readingTime && (
+              <>
+                <span aria-hidden="true">·</span>
+                <span>{data.readingTime} min read</span>
+              </>
+            )}
+          </div>
+        </header>
+
+        <!-- Mobile TOC -->
+        <div class="lg:hidden mb-8">
+          <TableOfContents headings={headings} />
+        </div>
+
+        <!-- Body -->
+        <div
+          class="prose prose-lg max-w-none
+            prose-headings:font-serif prose-headings:font-bold prose-headings:text-[var(--color-text)]
+            prose-p:text-[var(--color-text)] prose-p:leading-relaxed
+            prose-a:text-[var(--color-brand)] prose-a:no-underline hover:prose-a:underline
+            prose-strong:text-[var(--color-text)]
+            prose-code:text-[var(--color-brand)] prose-code:bg-[var(--color-surface-2)] prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-sm prose-code:before:content-none prose-code:after:content-none
+            prose-pre:bg-[oklch(15%_0.01_264)] prose-pre:rounded-2xl
+            prose-blockquote:border-l-[var(--color-brand)] prose-blockquote:text-[var(--color-text-muted)]
+            prose-img:rounded-2xl prose-img:shadow-md
+            prose-hr:border-[var(--color-border)]"
+          itemprop="articleBody"
+        >
+          <slot />
+        </div>
+
+        <!-- Tags -->
+        {data.tags.length > 0 && (
+          <div class="mt-8 pt-6 border-t border-[var(--color-border)]">
+            <p class="text-xs font-semibold uppercase tracking-wider text-[var(--color-text-muted)] mb-3">Tags</p>
+            <div class="flex flex-wrap gap-2">
+              {data.tags.map(tag => (
+                <span class="px-3 py-1 rounded-full text-xs bg-[var(--color-surface-2)] border border-[var(--color-border)] text-[var(--color-text-muted)]">
+                  {tag}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
+
+        <!-- Social share -->
+        <div class="mt-8 pt-6 border-t border-[var(--color-border)]">
+          <p class="text-xs font-semibold uppercase tracking-wider text-[var(--color-text-muted)] mb-3">Share this article</p>
+          <div class="flex items-center gap-3">
+            <a
+              href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(data.title)}&url=${encodeURIComponent(`https://growthmarketinghub.com/blog/${post.id}`)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-[var(--color-border)] text-sm text-[var(--color-text-muted)] hover:text-[var(--color-text)] hover:bg-[var(--color-surface-2)] transition-colors"
+              aria-label="Share on X (Twitter)"
+            >
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+              Share
+            </a>
+            <a
+              href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(`https://growthmarketinghub.com/blog/${post.id}`)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-[var(--color-border)] text-sm text-[var(--color-text-muted)] hover:text-[var(--color-text)] hover:bg-[var(--color-surface-2)] transition-colors"
+              aria-label="Share on LinkedIn"
+            >
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+              Share
+            </a>
+          </div>
+        </div>
+
+        <!-- Author bio -->
+        <div class="mt-8">
+          <AuthorBio
+            name={data.author}
+            bio={data.authorBio}
+            avatar={data.authorAvatar}
+            slug={data.authorSlug}
+          />
+        </div>
+
+        <!-- CTA to discuss -->
+        <div class="mt-8 p-6 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface-2)] text-center">
+          <h3 class="font-serif font-semibold text-[var(--color-text)] mb-2">Have questions or want to discuss?</h3>
+          <p class="text-sm text-[var(--color-text-muted)] mb-4">We'd love to hear from you — reach out or follow us for more content.</p>
+          <a href="/contact" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[var(--color-brand)] text-white text-sm font-semibold hover:opacity-90 transition-opacity">
+            Get in Touch
+          </a>
+        </div>
+      </article>
+
+      <!-- Sidebar -->
+      <aside class="hidden lg:block">
+        <div class="sticky top-24 space-y-6">
+          <TableOfContents headings={headings} />
+          <Newsletter />
+        </div>
+      </aside>
+    </div>
+
+    <!-- Related posts -->
+    {relatedPosts.length > 0 && (
+      <section class="mt-16 pt-10 border-t border-[var(--color-border)]" aria-labelledby="related-heading">
+        <h2 id="related-heading" class="font-serif text-2xl font-bold text-[var(--color-text)] mb-6">Related Articles</h2>
+        <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {relatedPosts.map(p => <ArticleCard post={p} />)}
+        </div>
+      </section>
+    )}
+  </div>
+</BaseLayout>

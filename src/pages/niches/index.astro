@@ -1,0 +1,31 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { NICHES } from '../../lib/constants';
+---
+
+<BaseLayout
+  title="Marketing Niches"
+  description="Explore in-depth growth marketing guides for every channel: SEO, PPC, social media, email, content marketing, AI tools, and more."
+>
+  <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
+    <div class="max-w-2xl mb-10">
+      <h1 class="font-serif text-3xl sm:text-4xl font-bold text-[var(--color-text)] mb-3">Marketing Channels</h1>
+      <p class="text-lg text-[var(--color-text-muted)]">Deep-dive resources for every growth marketing discipline. Choose your channel to explore tactics, case studies, and guides.</p>
+    </div>
+    <div class="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      {NICHES.map(n => (
+        <a
+          href={`/niches/${n.slug}`}
+          class="card-hover group flex flex-col gap-4 p-6 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] hover:border-[var(--color-brand)] transition-colors"
+        >
+          <span class="text-4xl" aria-hidden="true">{n.icon}</span>
+          <div>
+            <h2 class="font-serif font-semibold text-[var(--color-text)] group-hover:text-[var(--color-brand)] transition-colors mb-1">{n.label}</h2>
+            <p class="text-sm text-[var(--color-text-muted)]">{n.description}</p>
+          </div>
+          <span class="mt-auto text-sm font-medium text-[var(--color-brand)]">Explore →</span>
+        </a>
+      ))}
+    </div>
+  </div>
+</BaseLayout>

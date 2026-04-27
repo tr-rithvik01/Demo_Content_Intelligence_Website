@@ -1,0 +1,65 @@
+backend:
+  name: github
+  repo: YOUR_GITHUB_USERNAME/YOUR_REPO_NAME  # e.g. acme/growthmarketinghub
+  branch: main
+  base_url: https://growthmarketinghub.com
+  auth_endpoint: api/auth
+
+# Enable local backend for development: run `npx decap-server` alongside dev server
+# local_backend: true
+
+media_folder: public/images/blog
+public_folder: /images/blog
+
+collections:
+  - name: blog
+    label: Blog Posts
+    folder: src/content/blog
+    create: true
+    slug: "{{slug}}"
+    extension: mdx
+    format: frontmatter
+    preview_path: blog/{{slug}}
+    fields:
+      - { label: Title, name: title, widget: string, hint: "Under 60 characters for SEO" }
+      - { label: Description, name: description, widget: string, hint: "Under 160 characters for SEO" }
+      - { label: Publish Date, name: publishDate, widget: datetime }
+      - { label: Updated Date, name: updatedDate, widget: datetime, required: false }
+      - { label: Author Name, name: author, widget: string }
+      - { label: Author Slug, name: authorSlug, widget: string }
+      - { label: Author Bio, name: authorBio, widget: text, required: false }
+      - { label: Author Avatar, name: authorAvatar, widget: image, required: false }
+      - { label: Hero Image, name: image, widget: image, required: false }
+      - { label: Image Alt Text, name: imageAlt, widget: string, required: false }
+      - label: Marketing Niche
+        name: niche
+        widget: select
+        options:
+          - { label: SEO, value: seo }
+          - { label: PPC & Paid Media, value: ppc }
+          - { label: Social Media, value: social-media }
+          - { label: Local SEO, value: local-seo }
+          - { label: Content Marketing, value: content-marketing }
+          - { label: Email & Automation, value: email-marketing }
+          - { label: AI Marketing Tools, value: ai-tools }
+          - { label: Analytics & CRO, value: analytics-cro }
+      - label: Industry (optional)
+        name: industry
+        widget: select
+        required: false
+        options:
+          - { label: General, value: general }
+          - { label: Real Estate, value: real-estate }
+          - { label: SaaS & B2B Tech, value: saas-b2b }
+          - { label: E-commerce & DTC, value: ecommerce }
+          - { label: Healthcare & MedTech, value: healthcare }
+          - { label: Fintech & Finance, value: fintech }
+          - { label: Professional Services, value: professional-services }
+          - { label: Logistics & Supply Chain, value: logistics }
+          - { label: Hospitality & Travel, value: hospitality }
+      - { label: Tags, name: tags, widget: list, required: false, hint: "Comma-separated tags" }
+      - { label: Featured, name: featured, widget: boolean, default: false }
+      - { label: Draft, name: draft, widget: boolean, default: true }
+      - { label: Reading Time (minutes), name: readingTime, widget: number, required: false }
+      - { label: Canonical URL, name: canonicalUrl, widget: string, required: false, hint: "Only set if this article is republished from elsewhere" }
+      - { label: Body, name: body, widget: markdown }

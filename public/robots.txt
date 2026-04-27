@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+
+# Block CMS admin from crawlers
+Disallow: /admin/
+
+Sitemap: https://growthmarketinghub.com/sitemap-index.xml

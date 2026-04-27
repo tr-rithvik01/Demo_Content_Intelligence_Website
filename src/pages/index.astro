@@ -1,0 +1,168 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ArticleCard from '../components/blog/ArticleCard.astro';
+import Newsletter from '../components/home/Newsletter.astro';
+import { getCollection } from 'astro:content';
+import { NICHES, INDUSTRIES } from '../lib/constants';
+
+const allPosts = await getCollection('blog', ({ data }) => !data.draft);
+const featuredPosts = allPosts
+  .filter(p => p.data.featured)
+  .sort((a, b) => b.data.publishDate.getTime() - a.data.publishDate.getTime())
+  .slice(0, 5);
+
+const recentPosts = allPosts
+  .sort((a, b) => b.data.publishDate.getTime() - a.data.publishDate.getTime())
+  .slice(0, 6);
+
+const stats = [
+  { value: '12,000+', label: 'Marketers subscribed' },
+  { value: '200+', label: 'In-depth guides' },
+  { value: '8', label: 'Marketing niches covered' },
+  { value: '8', label: 'Industry verticals' },
+];
+---
+
+<BaseLayout
+  description="The one-stop hub for growth marketing news, guides, case studies, and actionable strategies across every channel and industry."
+>
+  <!-- Hero -->
+  <section class="relative overflow-hidden bg-[var(--color-surface-2)] border-b border-[var(--color-border)]" aria-labelledby="hero-heading">
+    <div class="absolute inset-0 bg-gradient-to-br from-[oklch(55%_0.22_264/0.05)] to-[oklch(65%_0.22_30/0.05)]" aria-hidden="true"></div>
+    <div class="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-20 lg:py-28">
+      <div class="max-w-3xl mx-auto text-center">
+        <p class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[var(--color-brand)]/10 text-[var(--color-brand)] text-sm font-medium mb-6">
+          <span aria-hidden="true">🚀</span> Growth marketing, demystified
+        </p>
+        <h1 id="hero-heading" class="font-serif text-4xl sm:text-5xl lg:text-6xl font-bold text-[var(--color-text)] leading-tight">
+          Grow your business with
+          <span class="text-gradient"> proven marketing</span> strategies
+        </h1>
+        <p class="mt-6 text-lg text-[var(--color-text-muted)] leading-relaxed max-w-2xl mx-auto">
+          Actionable guides, real case studies, and expert tactics across SEO, PPC, content, email, social, and AI tools — tailored for your industry.
+        </p>
+        <div class="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
+          <a href="/blog" class="px-6 py-3 rounded-xl bg-[var(--color-brand)] text-white font-semibold hover:opacity-90 transition-opacity">
+            Explore the Blog
+          </a>
+          <a href="/resources" class="px-6 py-3 rounded-xl border border-[var(--color-border)] text-[var(--color-text)] font-semibold hover:bg-[var(--color-surface-2)] transition-colors">
+            Free Resources
+          </a>
+        </div>
+      </div>
+      <div class="mt-16 grid grid-cols-2 md:grid-cols-4 gap-6 max-w-3xl mx-auto">
+        {stats.map(s => (
+          <div class="text-center">
+            <p class="font-serif text-2xl sm:text-3xl font-bold text-[var(--color-brand)]">{s.value}</p>
+            <p class="mt-1 text-xs text-[var(--color-text-muted)]">{s.label}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Featured posts -->
+  {featuredPosts.length > 0 && (
+    <section class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16" aria-labelledby="featured-heading">
+      <div class="flex items-center justify-between mb-8">
+        <h2 id="featured-heading" class="font-serif text-2xl sm:text-3xl font-bold text-[var(--color-text)]">Featured Articles</h2>
+        <a href="/blog" class="text-sm font-medium text-[var(--color-brand)] hover:underline">View all →</a>
+      </div>
+      <div class="grid gap-6">
+        {featuredPosts[0] && <ArticleCard post={featuredPosts[0]} featured />}
+        {featuredPosts.length > 1 && (
+          <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {featuredPosts.slice(1).map(post => <ArticleCard post={post} />)}
+          </div>
+        )}
+      </div>
+    </section>
+  )}
+
+  <!-- Niche nav -->
+  <section class="border-y border-[var(--color-border)] bg-[var(--color-surface-2)]" aria-labelledby="niches-heading">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16">
+      <div class="text-center mb-10">
+        <h2 id="niches-heading" class="font-serif text-2xl sm:text-3xl font-bold text-[var(--color-text)]">Explore by Marketing Channel</h2>
+        <p class="mt-2 text-[var(--color-text-muted)]">Deep dives into every growth marketing discipline</p>
+      </div>
+      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+        {NICHES.map(n => (
+          <a
+            href={`/niches/${n.slug}`}
+            class="card-hover group flex flex-col items-center gap-3 p-5 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] text-center hover:border-[var(--color-brand)] transition-colors"
+          >
+            <span class="text-3xl" aria-hidden="true">{n.icon}</span>
+            <span class="font-semibold text-sm text-[var(--color-text)] group-hover:text-[var(--color-brand)] transition-colors">{n.label}</span>
+            <span class="text-xs text-[var(--color-text-muted)]">{n.description}</span>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Recent posts -->
+  {recentPosts.length > 0 && (
+    <section class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16" aria-labelledby="recent-heading">
+      <div class="flex items-center justify-between mb-8">
+        <h2 id="recent-heading" class="font-serif text-2xl sm:text-3xl font-bold text-[var(--color-text)]">Latest Articles</h2>
+        <a href="/blog" class="text-sm font-medium text-[var(--color-brand)] hover:underline">View all →</a>
+      </div>
+      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {recentPosts.map(post => <ArticleCard post={post} />)}
+      </div>
+    </section>
+  )}
+
+  <!-- Industry nav -->
+  <section class="border-t border-[var(--color-border)] bg-[var(--color-surface-2)]" aria-labelledby="industries-heading">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16">
+      <div class="text-center mb-10">
+        <h2 id="industries-heading" class="font-serif text-2xl sm:text-3xl font-bold text-[var(--color-text)]">Strategies for Your Industry</h2>
+        <p class="mt-2 text-[var(--color-text-muted)]">Marketing playbooks tailored to your vertical</p>
+      </div>
+      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+        {INDUSTRIES.map(ind => (
+          <a
+            href={`/industries/${ind.slug}`}
+            class="card-hover group flex items-center gap-3 p-4 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] hover:border-[var(--color-brand)] transition-colors"
+          >
+            <span class="text-2xl flex-shrink-0" aria-hidden="true">{ind.icon}</span>
+            <div>
+              <p class="font-semibold text-sm text-[var(--color-text)] group-hover:text-[var(--color-brand)] transition-colors">{ind.label}</p>
+              <p class="text-xs text-[var(--color-text-muted)] mt-0.5 line-clamp-1">{ind.description}</p>
+            </div>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Social proof -->
+  <section class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16" aria-labelledby="proof-heading">
+    <h2 id="proof-heading" class="font-serif text-2xl sm:text-3xl font-bold text-[var(--color-text)] text-center mb-8">What our readers say</h2>
+    <div class="grid sm:grid-cols-3 gap-6">
+      {[
+        { quote: "The most actionable marketing content I've found. No fluff, just tactics that work.", name: "Sarah K.", role: "Head of Growth, SaaS startup" },
+        { quote: "Finally a resource that covers both the strategy and the execution. Saved me hours every week.", name: "Marcus T.", role: "Agency founder" },
+        { quote: "The industry-specific guides are gold. The real estate SEO playbook alone tripled our leads.", name: "Jennifer M.", role: "Real estate broker" },
+      ].map(t => (
+        <figure class="p-6 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface-2)]">
+          <svg class="w-6 h-6 text-[var(--color-brand)] mb-3" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
+          </svg>
+          <blockquote class="text-sm text-[var(--color-text)] leading-relaxed mb-4">{t.quote}</blockquote>
+          <figcaption>
+            <p class="font-semibold text-sm text-[var(--color-text)]">{t.name}</p>
+            <p class="text-xs text-[var(--color-text-muted)]">{t.role}</p>
+          </figcaption>
+        </figure>
+      ))}
+    </div>
+  </section>
+
+  <!-- Newsletter CTA -->
+  <section class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pb-16">
+    <Newsletter variant="full" />
+  </section>
+</BaseLayout>

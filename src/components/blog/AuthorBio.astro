@@ -1,0 +1,38 @@
+---
+interface Props {
+  name: string;
+  bio?: string;
+  avatar?: string;
+  slug: string;
+}
+
+const { name, bio, avatar, slug } = Astro.props;
+---
+
+<div
+  class="flex items-start gap-4 p-6 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface-2)]"
+  itemscope
+  itemtype="https://schema.org/Person"
+>
+  {avatar ? (
+    <img
+      src={avatar}
+      alt={name}
+      class="w-14 h-14 rounded-full object-cover flex-shrink-0 ring-2 ring-[var(--color-border)]"
+      width="56"
+      height="56"
+      itemprop="image"
+    />
+  ) : (
+    <div class="w-14 h-14 rounded-full bg-[var(--color-brand)] flex items-center justify-center flex-shrink-0 text-white font-serif text-xl font-bold" aria-hidden="true">
+      {name.charAt(0)}
+    </div>
+  )}
+  <div>
+    <p class="text-xs font-semibold uppercase tracking-wider text-[var(--color-text-muted)] mb-1">Written by</p>
+    <p class="font-serif font-semibold text-[var(--color-text)]" itemprop="name">{name}</p>
+    {bio && (
+      <p class="mt-1 text-sm text-[var(--color-text-muted)] leading-relaxed" itemprop="description">{bio}</p>
+    )}
+  </div>
+</div>

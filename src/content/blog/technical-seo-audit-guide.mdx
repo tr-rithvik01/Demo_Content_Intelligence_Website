@@ -1,0 +1,227 @@
+---
+title: "The Complete Technical SEO Audit: 85 Checks for 2025"
+description: "A step-by-step technical SEO audit covering crawlability, Core Web Vitals, structured data, indexation, and site architecture — with fixes."
+publishDate: 2025-03-15
+author: "James Okafor"
+authorSlug: "james-okafor"
+authorBio: "Technical SEO Director with 12 years of experience. Speaker at BrightonSEO and MozCon. Has helped 30+ companies earn top-3 rankings for competitive keywords."
+image: "/images/blog/technical-seo-audit.jpg"
+imageAlt: "Developer reviewing a website technical SEO audit report on a laptop"
+niche: "seo"
+tags: ["technical seo", "site audit", "core web vitals", "crawlability"]
+featured: true
+draft: false
+readingTime: 18
+---
+
+A technical SEO audit is the foundation of every successful organic growth strategy. Before you write another word of content or build another backlink, you need to know whether Google can properly crawl, index, and understand your site.
+
+This guide walks you through every check we run for clients — in priority order, with specific fixes.
+
+## Why Technical SEO Audits Matter
+
+Most SEO guides focus on content and links. Both matter. But they're rendered meaningless if Google can't access, render, or understand your pages. A site with excellent content but broken canonicals, crawl budget waste, or slow Core Web Vitals will be consistently outranked by technically sound competitors.
+
+We've seen sites with mediocre content dramatically outperform well-written competitors simply because they got the technical fundamentals right.
+
+## Part 1: Crawlability & Indexation
+
+### 1.1 Crawl Budget Analysis
+
+For sites over 10,000 pages, crawl budget becomes a meaningful constraint. Google's crawlers will not re-crawl every page on every visit — they prioritize based on signals like PageRank, freshness, and crawl efficiency signals.
+
+**What to check:**
+
+1. Run a Screaming Frog crawl and compare discovered URLs vs. indexed URLs in Google Search Console
+2. Identify any pages consuming crawl budget that should be excluded (pagination, faceted navigation, internal search results, thin content)
+3. Check your server logs for Googlebot activity patterns
+
+**The fix:** Add `noindex` or `disallow` rules for low-value URL patterns. Use canonical tags to consolidate duplicate content signals.
+
+### 1.2 robots.txt Validation
+
+Your `robots.txt` file is the first thing crawlers read. Mistakes here can accidentally block large sections of your site from being crawled.
+
+```
+# Correct: allow all except admin
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /internal-search/
+Sitemap: https://yourdomain.com/sitemap.xml
+```
+
+**Common mistakes:**
+- Blocking CSS or JS files that Google needs to render your pages
+- Wildcard rules that accidentally block important sections
+- Missing or incorrect sitemap URL
+
+### 1.3 XML Sitemap Health
+
+Your XML sitemap tells Google which pages you consider important and when they were last updated.
+
+**What to audit:**
+- Sitemap submitted to Google Search Console
+- No 301, 302, or 404 URLs in the sitemap
+- Only canonical URLs included (not noindex pages)
+- `<lastmod>` dates are accurate (not all set to today or 2019)
+- Sitemap index file if you have multiple sitemaps
+
+**Tool:** Google Search Console > Sitemaps report. Cross-reference with a crawl.
+
+## Part 2: Core Web Vitals
+
+As of March 2024, Core Web Vitals are a confirmed Google ranking signal. The three metrics that matter:
+
+| Metric | Good | Needs Improvement | Poor |
+|--------|------|-------------------|------|
+| LCP (Largest Contentful Paint) | < 2.5s | 2.5–4s | > 4s |
+| INP (Interaction to Next Paint) | < 200ms | 200–500ms | > 500ms |
+| CLS (Cumulative Layout Shift) | < 0.1 | 0.1–0.25 | > 0.25 |
+
+### Improving LCP
+
+LCP measures how long it takes for the largest visible element to load. Usually it's your hero image or H1.
+
+**The fastest LCP wins:**
+1. Serve images via a CDN (Cloudflare Images, Imgix)
+2. Use modern formats: WebP or AVIF
+3. Add `fetchpriority="high"` to your hero image
+4. Preload the LCP image with `<link rel="preload">`
+5. Eliminate render-blocking resources above the fold
+
+### Improving CLS
+
+CLS measures unexpected layout shifts during page load. The biggest culprits:
+
+- Images without explicit `width` and `height` attributes
+- Web fonts causing FOUT (Flash of Unstyled Text) — fix with `font-display: swap` and preloading
+- Ads or embeds that load asynchronously and push content down
+- Late-loading DOM content above existing content
+
+**Always specify dimensions on images:**
+
+```html
+<!-- Bad: browser doesn't know the aspect ratio -->
+<img src="hero.jpg" alt="Hero">
+
+<!-- Good: browser reserves space immediately -->
+<img src="hero.jpg" alt="Hero" width="1200" height="630">
+```
+
+## Part 3: Canonicalization & Duplicate Content
+
+Duplicate content doesn't incur a "penalty" — but it does split PageRank signals across multiple URLs, diluting the ranking power of your original content.
+
+### 3.1 Canonical Tag Audit
+
+Every page should have a self-referencing canonical tag. Every page.
+
+**Check for:**
+- Missing canonicals
+- Self-canonicals pointing to the wrong URL (www vs non-www, trailing slash vs none, HTTP vs HTTPS)
+- Canonicals pointing to 301 redirect chains
+- Noindex pages with canonical tags (Google ignores canonicals on noindexed pages — a common mistake)
+
+### 3.2 HTTPS & URL Consistency
+
+Your site should have exactly one canonical home. If `http://domain.com`, `https://domain.com`, `http://www.domain.com`, and `https://www.domain.com` all resolve separately, you have duplicate content and a canonicalization problem.
+
+**Fix:** 301 redirect all variants to your canonical URL (`https://www.domain.com` or `https://domain.com` — pick one and stick to it).
+
+## Part 4: Structured Data (Schema Markup)
+
+Structured data helps Google understand your content contextually and enables rich results in the SERPs (article bylines, FAQ dropdowns, review stars, etc.).
+
+### Implementing Article Schema
+
+For every blog post, include:
+
+```json
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "Your Article Title",
+  "datePublished": "2025-03-15",
+  "dateModified": "2025-03-15",
+  "author": {
+    "@type": "Person",
+    "name": "James Okafor"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "GrowthMarketing Hub"
+  }
+}
+```
+
+**Test with:** Google's [Rich Results Test](https://search.google.com/test/rich-results) and Schema Markup Validator.
+
+## Part 5: Internal Linking Architecture
+
+Your internal linking structure determines how PageRank flows through your site. Orphaned pages (pages with no internal links pointing to them) are effectively invisible to Google.
+
+**What to audit:**
+- Pages with zero internal links pointing to them (crawl > filter by inlinks = 0)
+- Pages with too few internal links for their importance
+- Anchor text diversity — are you using keyword-rich, descriptive anchor text?
+- Navigation depth — can Google reach every important page in 3 clicks from the homepage?
+
+### Building a Topic Cluster Architecture
+
+The most link-efficient structure for content-heavy sites:
+
+1. **Pillar page** — comprehensive guide on a broad topic (e.g., "SEO for Real Estate")
+2. **Cluster pages** — deep-dives on specific subtopics that link back to the pillar
+3. **Internal links** — every cluster page links to the pillar; related clusters link to each other
+
+This concentrates topical authority and makes it easy for Google to understand your content hierarchy.
+
+## Part 6: Page Speed & Technical Performance
+
+Beyond Core Web Vitals, overall page speed matters for both rankings and user experience.
+
+**Tools to use:**
+- [PageSpeed Insights](https://pagespeed.web.dev) — real field data + lab data
+- [GTmetrix](https://gtmetrix.com) — waterfall analysis
+- Chrome DevTools > Lighthouse
+
+**Common wins:**
+- Enable compression (Brotli > Gzip)
+- Leverage browser caching (Cloudflare handles this automatically)
+- Eliminate unused CSS/JS (check Coverage tab in Chrome DevTools)
+- Reduce server response time (TTFB) — target under 600ms
+
+## Your Audit Checklist
+
+Here's the prioritized list of everything to check:
+
+**P0 — Fix immediately:**
+- [ ] All pages accessible via HTTPS with 301 redirects from HTTP
+- [ ] No accidentally noindexed pages (check GSC > Coverage)
+- [ ] Sitemap submitted and error-free in GSC
+- [ ] robots.txt not blocking CSS, JS, or important content sections
+- [ ] Core Web Vitals: LCP < 2.5s, CLS < 0.1, INP < 200ms
+
+**P1 — Fix this sprint:**
+- [ ] Canonical tags on every page, self-referencing and correct
+- [ ] All images have width/height attributes
+- [ ] Structured data on all article pages (Article schema)
+- [ ] Organization and WebSite schema on homepage
+- [ ] No orphaned pages (0 internal links)
+- [ ] XML sitemap contains only canonical, indexable URLs
+
+**P2 — Fix next sprint:**
+- [ ] Internal linking audit — strategic anchor text, cluster structure
+- [ ] Pagination handled correctly (rel="next"/"prev" removed, canonical or noindex strategy)
+- [ ] Hreflang implemented if serving multiple markets/languages
+- [ ] 404 error pages reviewed and fixed or redirected
+- [ ] Log file analysis for crawl budget optimization
+
+## Next Steps
+
+A technical audit is a point-in-time snapshot. Build a recurring audit cadence — quarterly at minimum, monthly for large sites — and track your findings in a shared document that the whole team can access.
+
+The fixes prioritized above will have the most impact on organic visibility. Start with P0, validate in Google Search Console, then work down the list.
+
+Have questions about a specific audit finding? [Get in touch](/contact) — we review technical SEO questions from our readers regularly.

@@ -1,0 +1,37 @@
+---
+interface Heading {
+  depth: number;
+  text: string;
+  slug: string;
+}
+
+interface Props {
+  headings: Heading[];
+}
+
+const { headings } = Astro.props;
+const filtered = headings.filter(h => h.depth === 2 || h.depth === 3);
+---
+
+{filtered.length > 2 && (
+  <nav aria-label="Table of contents" class="p-5 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface-2)] text-sm">
+    <p class="font-semibold text-[var(--color-text)] mb-3 flex items-center gap-2">
+      <svg class="w-4 h-4 text-[var(--color-brand)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h8M4 18h8" />
+      </svg>
+      Table of Contents
+    </p>
+    <ol class="space-y-1" role="list">
+      {filtered.map(h => (
+        <li class:list={[h.depth === 3 ? "ml-4" : ""]}>
+          <a
+            href={`#${h.slug}`}
+            class="block py-0.5 text-[var(--color-text-muted)] hover:text-[var(--color-brand)] transition-colors"
+          >
+            {h.text}
+          </a>
+        </li>
+      ))}
+    </ol>
+  </nav>
+)}

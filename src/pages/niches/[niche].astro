@@ -1,0 +1,172 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ArticleCard from '../../components/blog/ArticleCard.astro';
+import Newsletter from '../../components/home/Newsletter.astro';
+import { getCollection } from 'astro:content';
+import { NICHES } from '../../lib/constants';
+
+export function getStaticPaths() {
+  return NICHES.map(n => ({ params: { niche: n.slug } }));
+}
+
+const { niche: nicheSlug } = Astro.params;
+const niche = NICHES.find(n => n.slug === nicheSlug)!;
+
+const allPosts = await getCollection('blog', ({ data }) => !data.draft && data.niche === nicheSlug);
+const posts = allPosts.sort((a, b) => b.data.publishDate.getTime() - a.data.publishDate.getTime());
+
+const nicheSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'CollectionPage',
+  name: `${niche.label} — GrowthMarketing Hub`,
+  description: niche.description,
+  url: `https://growthmarketinghub.com/niches/${nicheSlug}`,
+};
+
+const breadcrumbSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://growthmarketinghub.com' },
+    { '@type': 'ListItem', position: 2, name: 'Niches', item: 'https://growthmarketinghub.com/niches' },
+    { '@type': 'ListItem', position: 3, name: niche.label, item: `https://growthmarketinghub.com/niches/${nicheSlug}` },
+  ],
+};
+
+const nicheContent: Record<string, { heading: string; subheading: string; intro: string; topics: string[] }> = {
+  seo: {
+    heading: 'SEO Strategies That Drive Organic Growth',
+    subheading: 'Technical SEO, on-page optimization, link building, and local SEO guides for every business.',
+    intro: 'Search engine optimization is the highest-ROI channel for most businesses — but only when done right. Our SEO guides cover everything from technical audits and Core Web Vitals to content strategy, link building, and local search domination.',
+    topics: ['Technical SEO & Site Audits', 'On-Page Optimization', 'Link Building & Off-Page SEO', 'Local SEO & GMB', 'E-E-A-T & Content Quality', 'Core Web Vitals', 'Schema Markup', 'International SEO'],
+  },
+  ppc: {
+    heading: 'PPC & Paid Media That Converts',
+    subheading: 'Google Ads, Meta Ads, LinkedIn, and programmatic strategies to maximize your ad spend ROI.',
+    intro: 'Paid media done right delivers immediate, scalable growth. Our PPC guides cover campaign structure, bidding strategies, creative testing, and attribution — across every major platform.',
+    topics: ['Google Search & Shopping', 'Meta Ads (Facebook & Instagram)', 'LinkedIn Ads', 'YouTube Advertising', 'Programmatic Display', 'Retargeting & Remarketing', 'Conversion Rate Optimization', 'Attribution & Measurement'],
+  },
+  'social-media': {
+    heading: 'Social Media Marketing That Builds Audiences',
+    subheading: 'Organic growth strategies for Instagram, LinkedIn, TikTok, X, and YouTube.',
+    intro: 'Social media is where brands are built. Our guides cover platform-specific growth tactics, content calendars, community building, influencer partnerships, and turning followers into customers.',
+    topics: ['Instagram Growth', 'LinkedIn for B2B', 'TikTok Strategy', 'X (Twitter) Marketing', 'YouTube SEO', 'Content Calendars', 'Influencer Marketing', 'Community Building'],
+  },
+  'local-seo': {
+    heading: 'Local SEO & Google Business Profile Mastery',
+    subheading: 'Dominate local search results and drive foot traffic and calls from your community.',
+    intro: 'For local businesses, appearing in the Map Pack is the difference between thriving and surviving. Our local SEO guides cover GBP optimization, citation building, review generation, and hyperlocal content strategies.',
+    topics: ['Google Business Profile Optimization', 'Citation Building & NAP Consistency', 'Review Generation', 'Local Link Building', 'Map Pack Ranking Factors', 'Hyperlocal Content', 'Multi-Location SEO', 'Local Schema Markup'],
+  },
+  'content-marketing': {
+    heading: 'Content Marketing That Ranks and Converts',
+    subheading: 'From strategy and ideation to production, distribution, and ROI measurement.',
+    intro: 'Great content is the foundation of every successful digital marketing strategy. Our content marketing guides cover topic research, editorial planning, long-form writing, content distribution, and measuring content ROI.',
+    topics: ['Content Strategy & Planning', 'Topic Clustering & Pillar Pages', 'Long-Form Content Creation', 'Content Distribution', 'Repurposing & Syndication', 'Podcast Marketing', 'Video Content Strategy', 'Content ROI Measurement'],
+  },
+  'email-marketing': {
+    heading: 'Email Marketing & Automation That Drives Revenue',
+    subheading: 'Build sequences, automations, and campaigns that consistently generate revenue.',
+    intro: 'Email remains the highest-ROI marketing channel with an average return of $36 for every $1 spent. Our guides cover list building, segmentation, automation sequences, deliverability, and campaign strategy.',
+    topics: ['List Building & Lead Magnets', 'Email Segmentation', 'Welcome Sequences', 'Drip Campaigns & Automations', 'Email Deliverability', 'A/B Testing', 'Re-engagement Campaigns', 'Email Analytics & KPIs'],
+  },
+  'ai-tools': {
+    heading: 'AI Marketing Tools & Automation',
+    subheading: 'Leverage AI to scale your marketing output, personalize at scale, and automate the repetitive.',
+    intro: "AI is reshaping every aspect of marketing — from content creation and SEO to ad optimization and customer personalization. Our AI marketing guides cut through the hype to show you what's actually working.",
+    topics: ['AI Content Creation', 'AI for SEO', 'ChatGPT Marketing Use Cases', 'AI Ad Optimization', 'Personalization at Scale', 'Marketing Automation with AI', 'AI Analytics & Insights', 'Prompt Engineering for Marketers'],
+  },
+  'analytics-cro': {
+    heading: 'Analytics & Conversion Rate Optimization',
+    subheading: 'Turn your data into decisions and your visitors into customers.',
+    intro: 'What gets measured gets improved. Our analytics and CRO guides cover GA4 setup, attribution modeling, heatmaps, A/B testing, user research, and building a data-driven growth culture.',
+    topics: ['GA4 Setup & Configuration', 'Conversion Tracking', 'Heatmaps & Session Recording', 'A/B Testing & Experimentation', 'Landing Page Optimization', 'Attribution Modeling', 'Funnel Analysis', 'Customer Journey Mapping'],
+  },
+};
+
+const content = nicheContent[nicheSlug] ?? {
+  heading: `${niche.label} Strategies & Guides`,
+  subheading: niche.description,
+  intro: `Expert guides and actionable strategies for ${niche.label}.`,
+  topics: [],
+};
+---
+
+<BaseLayout
+  title={`${niche.label} Marketing`}
+  description={niche.description}
+  jsonLd={[nicheSchema, breadcrumbSchema]}
+>
+  <!-- Hero -->
+  <section class="border-b border-[var(--color-border)] bg-[var(--color-surface-2)]" aria-labelledby="niche-hero-heading">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16">
+      <nav aria-label="Breadcrumb" class="mb-6">
+        <ol class="flex items-center gap-2 text-sm text-[var(--color-text-muted)]" role="list">
+          <li><a href="/" class="hover:text-[var(--color-brand)] transition-colors">Home</a></li>
+          <li aria-hidden="true">›</li>
+          <li><a href="/niches" class="hover:text-[var(--color-brand)] transition-colors">Niches</a></li>
+          <li aria-hidden="true">›</li>
+          <li class="text-[var(--color-text)] font-medium" aria-current="page">{niche.label}</li>
+        </ol>
+      </nav>
+      <div class="max-w-3xl">
+        <div class="flex items-center gap-3 mb-4">
+          <span class="text-4xl" aria-hidden="true">{niche.icon}</span>
+          <span class="px-3 py-1 rounded-full text-xs font-semibold bg-[var(--color-brand)]/10 text-[var(--color-brand)] border border-[var(--color-brand)]/20">
+            {posts.length} {posts.length === 1 ? 'article' : 'articles'}
+          </span>
+        </div>
+        <h1 id="niche-hero-heading" class="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-[var(--color-text)] mb-4">{content.heading}</h1>
+        <p class="text-lg text-[var(--color-text-muted)] mb-4">{content.subheading}</p>
+        <p class="text-[var(--color-text-muted)] leading-relaxed">{content.intro}</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12 lg:grid lg:grid-cols-[1fr_280px] lg:gap-12">
+    <!-- Articles -->
+    <div>
+      {posts.length === 0 ? (
+        <div class="text-center py-20">
+          <p class="text-4xl mb-4" aria-hidden="true">✍️</p>
+          <h2 class="font-serif text-xl font-semibold text-[var(--color-text)] mb-2">Content coming soon</h2>
+          <p class="text-[var(--color-text-muted)]">We're working on in-depth {niche.label} guides. Subscribe to get notified.</p>
+        </div>
+      ) : (
+        <div class="grid sm:grid-cols-2 gap-6">
+          {posts.map(post => <ArticleCard post={post} />)}
+        </div>
+      )}
+    </div>
+
+    <!-- Sidebar -->
+    <aside class="mt-10 lg:mt-0 space-y-6">
+      {content.topics.length > 0 && (
+        <div class="p-5 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface-2)]">
+          <h2 class="font-semibold text-sm text-[var(--color-text)] mb-3">Topics covered</h2>
+          <ul class="space-y-2" role="list">
+            {content.topics.map(t => (
+              <li class="flex items-center gap-2 text-sm text-[var(--color-text-muted)]">
+                <span class="w-1.5 h-1.5 rounded-full bg-[var(--color-brand)] flex-shrink-0" aria-hidden="true"></span>
+                {t}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+      <Newsletter />
+      <div class="p-5 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface-2)]">
+        <h2 class="font-semibold text-sm text-[var(--color-text)] mb-3">Other channels</h2>
+        <ul class="space-y-2" role="list">
+          {NICHES.filter(n => n.slug !== nicheSlug).slice(0, 5).map(n => (
+            <li>
+              <a href={`/niches/${n.slug}`} class="flex items-center gap-2 text-sm text-[var(--color-text-muted)] hover:text-[var(--color-brand)] transition-colors">
+                <span aria-hidden="true">{n.icon}</span> {n.label}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </aside>
+  </div>
+</BaseLayout>

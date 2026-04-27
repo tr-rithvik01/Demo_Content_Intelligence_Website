@@ -1,0 +1,154 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { SITE_NAME } from '../lib/constants';
+
+const team = [
+  {
+    name: 'Alex Chen',
+    role: 'Editor-in-Chief',
+    bio: '15 years in growth marketing. Former Head of Marketing at two SaaS unicorns. Specializes in SEO, content strategy, and B2B demand generation.',
+    avatar: '',
+    credentials: ['Former Head of Marketing, Series B SaaS', 'Google Analytics Certified', 'Author of 200+ growth marketing guides'],
+  },
+  {
+    name: 'Maya Rodriguez',
+    role: 'PPC & Paid Media Lead',
+    bio: 'Managed $20M+ in ad spend across Google, Meta, and LinkedIn. Ex-agency strategist turned in-house expert. Passionate about ROAS transparency.',
+    avatar: '',
+    credentials: ['Google Ads Certified', '$20M+ ad spend managed', 'Former Director of Paid Media, Digital Agency'],
+  },
+  {
+    name: 'James Okafor',
+    role: 'SEO Director',
+    bio: 'Technical SEO specialist with a background in software engineering. Helped 30+ companies earn top-3 rankings for competitive keywords.',
+    avatar: '',
+    credentials: ['Technical SEO & Core Web Vitals expert', '30+ clients ranked on page 1', 'Speaker at BrightonSEO & MozCon'],
+  },
+];
+
+const orgSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'AboutPage',
+  name: `About ${SITE_NAME}`,
+  url: 'https://growthmarketinghub.com/about',
+  mainEntity: {
+    '@type': 'Organization',
+    name: SITE_NAME,
+    description: 'A growth marketing resource hub publishing actionable guides, case studies, and strategies for business owners and marketers.',
+    foundingDate: '2023',
+    url: 'https://growthmarketinghub.com',
+    member: team.map(m => ({
+      '@type': 'Person',
+      name: m.name,
+      jobTitle: m.role,
+      description: m.bio,
+    })),
+  },
+};
+---
+
+<BaseLayout
+  title="About Us"
+  description={`Learn about ${SITE_NAME}'s mission, editorial standards, and expert team of growth marketers. E-E-A-T signals and editorial guidelines.`}
+  jsonLd={orgSchema}
+>
+  <div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 py-12">
+    <!-- Mission -->
+    <section aria-labelledby="mission-heading" class="mb-16">
+      <h1 id="mission-heading" class="font-serif text-3xl sm:text-4xl font-bold text-[var(--color-text)] mb-6">Our Mission</h1>
+      <div class="prose prose-lg max-w-none prose-p:text-[var(--color-text)] prose-headings:font-serif prose-headings:text-[var(--color-text)]">
+        <p>
+          {SITE_NAME} exists to give every business owner and marketer access to the same calibre of marketing knowledge that Fortune 500 companies pay consultants $500/hour for — packaged in plain language, with real examples, and actionable next steps.
+        </p>
+        <p>
+          Too much marketing content on the internet is either too superficial to be useful or too academic to be applied. We write for practitioners: people who need to make decisions this week, run campaigns next month, and show results next quarter.
+        </p>
+        <p>
+          Everything we publish is researched, tested, and reviewed by practitioners with real-world skin in the game. We cite our sources, disclose our affiliations, and update articles when the landscape changes.
+        </p>
+      </div>
+    </section>
+
+    <!-- Editorial standards -->
+    <section aria-labelledby="editorial-heading" class="mb-16 p-8 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface-2)]">
+      <h2 id="editorial-heading" class="font-serif text-2xl font-bold text-[var(--color-text)] mb-6">Editorial Standards</h2>
+      <div class="grid sm:grid-cols-2 gap-6">
+        {[
+          { icon: '🔬', title: 'Research-backed', desc: 'Every claim is supported by data, studies, or direct practitioner experience. We link to primary sources.' },
+          { icon: '🔄', title: 'Regularly updated', desc: 'Marketing changes fast. We review and update our guides at least annually, and mark the last-updated date on every article.' },
+          { icon: '🚫', title: 'No affiliate influence', desc: 'Tool recommendations are based on merit, not commission rates. We disclose all affiliate relationships clearly.' },
+          { icon: '👤', title: 'Author accountability', desc: 'Every article is written or reviewed by a named expert with verifiable credentials. No anonymous "staff writer" content.' },
+          { icon: '✅', title: 'Fact-checked', desc: 'Statistics, case studies, and third-party claims are verified before publication. We correct errors promptly.' },
+          { icon: '🎯', title: 'Actionability first', desc: 'We cut theory and fluff. If a section doesn\'t help you do something better, it doesn\'t make the cut.' },
+        ].map(item => (
+          <div class="flex items-start gap-3">
+            <span class="text-2xl flex-shrink-0" aria-hidden="true">{item.icon}</span>
+            <div>
+              <h3 class="font-semibold text-[var(--color-text)] mb-1">{item.title}</h3>
+              <p class="text-sm text-[var(--color-text-muted)]">{item.desc}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- Team -->
+    <section aria-labelledby="team-heading" class="mb-16">
+      <h2 id="team-heading" class="font-serif text-2xl font-bold text-[var(--color-text)] mb-8">Meet the Team</h2>
+      <div class="space-y-8">
+        {team.map(member => (
+          <div
+            class="flex flex-col sm:flex-row gap-6 p-6 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)]"
+            itemscope
+            itemtype="https://schema.org/Person"
+          >
+            <div class="flex-shrink-0">
+              {member.avatar ? (
+                <img src={member.avatar} alt={member.name} class="w-20 h-20 rounded-full object-cover ring-2 ring-[var(--color-border)]" width="80" height="80" itemprop="image" />
+              ) : (
+                <div class="w-20 h-20 rounded-full bg-[var(--color-brand)] flex items-center justify-center text-white font-serif text-2xl font-bold" aria-hidden="true">
+                  {member.name.charAt(0)}
+                </div>
+              )}
+            </div>
+            <div>
+              <h3 class="font-serif text-xl font-semibold text-[var(--color-text)]" itemprop="name">{member.name}</h3>
+              <p class="text-sm font-medium text-[var(--color-brand)] mb-2" itemprop="jobTitle">{member.role}</p>
+              <p class="text-sm text-[var(--color-text-muted)] mb-3 leading-relaxed" itemprop="description">{member.bio}</p>
+              <ul class="space-y-1" role="list">
+                {member.credentials.map(c => (
+                  <li class="flex items-center gap-2 text-xs text-[var(--color-text-muted)]">
+                    <svg class="w-3.5 h-3.5 text-[var(--color-brand)] flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                    {c}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- Guest contributors -->
+    <section aria-labelledby="contributors-heading" class="mb-16 p-8 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface-2)]">
+      <h2 id="contributors-heading" class="font-serif text-2xl font-bold text-[var(--color-text)] mb-4">Guest Contributors</h2>
+      <p class="text-[var(--color-text-muted)] mb-4">
+        We occasionally publish guest content from vetted practitioners — agency owners, in-house marketers, and operators with proven track records. Guest posts must meet our editorial standards and are reviewed before publication.
+      </p>
+      <a href="/contact" class="inline-flex items-center gap-2 text-sm font-medium text-[var(--color-brand)] hover:underline">
+        Submit a guest post pitch →
+      </a>
+    </section>
+
+    <!-- Contact prompt -->
+    <section class="text-center">
+      <h2 class="font-serif text-2xl font-bold text-[var(--color-text)] mb-3">Get in touch</h2>
+      <p class="text-[var(--color-text-muted)] mb-6">For press enquiries, partnership opportunities, or to report an error, reach out.</p>
+      <a href="/contact" class="px-6 py-3 rounded-xl bg-[var(--color-brand)] text-white font-semibold hover:opacity-90 transition-opacity">
+        Contact Us
+      </a>
+    </section>
+  </div>
+</BaseLayout>
