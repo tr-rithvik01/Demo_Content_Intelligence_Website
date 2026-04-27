@@ -2,6 +2,8 @@
 dist/
 # generated types
 .astro/
+# wrangler local build artifacts (contain machine-specific paths)
+.wrangler/
 
 # dependencies
 node_modules/
