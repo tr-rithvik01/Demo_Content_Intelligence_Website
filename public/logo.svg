@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 128" fill="none">
+  <rect width="512" height="128" rx="24" fill="#0f172a"/>
+  <rect x="24" y="24" width="80" height="80" rx="20" fill="#e05a35"/>
+  <path d="M40 78 58 56l14 14 24-34" stroke="#fff" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="126" y="58" fill="#f8fafc" font-family="Plus Jakarta Sans, Arial, sans-serif" font-size="34" font-weight="800">GTM Remixed</text>
+  <text x="126" y="88" fill="#94a3b8" font-family="Plus Jakarta Sans, Arial, sans-serif" font-size="18" font-weight="600">AI-Native GTM Intelligence</text>
+</svg>

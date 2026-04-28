@@ -1,0 +1,22 @@
+---
+import PrototypeDocument from '../layouts/PrototypeDocument.astro';
+
+const slugParts = Astro.params.slug ?? [];
+const requestPath = `/${slugParts.join('/')}`;
+const validRoutePatterns = [
+  /^\/$/,
+  /^\/about$/,
+  /^\/blog$/,
+  /^\/blog\/[^/]+$/,
+  /^\/resources$/,
+  /^\/contact$/,
+  /^\/niches\/(seo|ppc|social-media|local-seo|analytics|content-marketing|email-marketing|cro)$/,
+  /^\/industries\/(saas|ecommerce|real-estate|healthcare|fintech|logistics|professional-services|hospitality)$/,
+];
+
+if (!validRoutePatterns.some(pattern => pattern.test(requestPath))) {
+  Astro.response.status = 404;
+}
+---
+
+<PrototypeDocument path={requestPath} noindex={Astro.response.status === 404} />

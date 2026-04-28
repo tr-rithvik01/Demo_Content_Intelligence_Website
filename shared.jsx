@@ -1,29 +1,29 @@
 // shared.jsx — Utility components, cards, buttons, callouts
 
-const { useState, useEffect, useRef, useCallback } = React;
+var { useState, useEffect, useRef, useCallback } = React;
 
 // —— DATA ————————————————————————————————————————————————————————————————————
 
 const NICHES = [
-  { id: 'seo',      name: 'SEO',               abbr: 'SE',  color: 'oklch(0.38 0.10 160)', bg: 'oklch(0.93 0.04 160)', count: 48 },
-  { id: 'ppc',      name: 'PPC',               abbr: 'PP',  color: 'oklch(0.35 0.09 250)', bg: 'oklch(0.92 0.03 250)', count: 36 },
-  { id: 'social',   name: 'Social Media',      abbr: 'SM',  color: 'oklch(0.40 0.12 290)', bg: 'oklch(0.93 0.03 290)', count: 29 },
-  { id: 'local',    name: 'Local SEO',         abbr: 'LS',  color: 'oklch(0.42 0.10 50)',  bg: 'oklch(0.94 0.03 50)',  count: 22 },
-  { id: 'analytics',name: 'Analytics',         abbr: 'AN',  color: 'oklch(0.40 0.12 220)', bg: 'oklch(0.92 0.03 220)', count: 31 },
-  { id: 'content',  name: 'Content Marketing', abbr: 'CM',  color: 'oklch(0.38 0.08 30)',  bg: 'oklch(0.94 0.02 30)',  count: 44 },
-  { id: 'email',    name: 'Email Marketing',   abbr: 'EM',  color: 'oklch(0.40 0.10 195)', bg: 'oklch(0.93 0.03 195)', count: 27 },
-  { id: 'cro',      name: 'CRO',               abbr: 'CR',  color: 'oklch(0.42 0.12 55)',  bg: 'oklch(0.94 0.03 55)',  count: 19 },
+  { id: 'seo',      slug: 'seo',               name: 'SEO',               abbr: 'SE',  color: 'oklch(0.38 0.10 160)', bg: 'oklch(0.93 0.04 160)', count: 48 },
+  { id: 'ppc',      slug: 'ppc',               name: 'PPC',               abbr: 'PP',  color: 'oklch(0.35 0.09 250)', bg: 'oklch(0.92 0.03 250)', count: 36 },
+  { id: 'social',   slug: 'social-media',      name: 'Social Media',      abbr: 'SM',  color: 'oklch(0.40 0.12 290)', bg: 'oklch(0.93 0.03 290)', count: 29 },
+  { id: 'local',    slug: 'local-seo',         name: 'Local SEO',         abbr: 'LS',  color: 'oklch(0.42 0.10 50)',  bg: 'oklch(0.94 0.03 50)',  count: 22 },
+  { id: 'analytics',slug: 'analytics',         name: 'Analytics',         abbr: 'AN',  color: 'oklch(0.40 0.12 220)', bg: 'oklch(0.92 0.03 220)', count: 31 },
+  { id: 'content',  slug: 'content-marketing', name: 'Content Marketing', abbr: 'CM',  color: 'oklch(0.38 0.08 30)',  bg: 'oklch(0.94 0.02 30)',  count: 44 },
+  { id: 'email',    slug: 'email-marketing',   name: 'Email Marketing',   abbr: 'EM',  color: 'oklch(0.40 0.10 195)', bg: 'oklch(0.93 0.03 195)', count: 27 },
+  { id: 'cro',      slug: 'cro',               name: 'CRO',               abbr: 'CR',  color: 'oklch(0.42 0.12 55)',  bg: 'oklch(0.94 0.03 55)',  count: 19 },
 ];
 
 const INDUSTRIES = [
-  { id: 'saas',         name: 'SaaS',                  abbr: 'SaaS', count: 38 },
-  { id: 'ecommerce',    name: 'E-commerce',             abbr: 'EC',   count: 42 },
-  { id: 'realestate',   name: 'Real Estate',            abbr: 'RE',   count: 24 },
-  { id: 'healthcare',   name: 'Healthcare',             abbr: 'HC',   count: 21 },
-  { id: 'fintech',      name: 'Fintech',                abbr: 'FT',   count: 18 },
-  { id: 'logistics',    name: 'Logistics',              abbr: 'LG',   count: 15 },
-  { id: 'professional', name: 'Professional Services',  abbr: 'PS',   count: 26 },
-  { id: 'hospitality',  name: 'Hospitality',            abbr: 'HO',   count: 14 },
+  { id: 'saas',         slug: 'saas',                  name: 'SaaS',                  abbr: 'SaaS', count: 38 },
+  { id: 'ecommerce',    slug: 'ecommerce',             name: 'E-commerce',            abbr: 'EC',   count: 42 },
+  { id: 'realestate',   slug: 'real-estate',           name: 'Real Estate',           abbr: 'RE',   count: 24 },
+  { id: 'healthcare',   slug: 'healthcare',            name: 'Healthcare',            abbr: 'HC',   count: 21 },
+  { id: 'fintech',      slug: 'fintech',               name: 'Fintech',               abbr: 'FT',   count: 18 },
+  { id: 'logistics',    slug: 'logistics',             name: 'Logistics',             abbr: 'LG',   count: 15 },
+  { id: 'professional', slug: 'professional-services', name: 'Professional Services', abbr: 'PS',   count: 26 },
+  { id: 'hospitality',  slug: 'hospitality',           name: 'Hospitality',           abbr: 'HO',   count: 14 },
 ];
 
 const ARTICLES = [
@@ -144,13 +144,13 @@ function ImgPlaceholder({ label, height = 180, style = {} }) {
   );
 }
 
-// —— ARTICLE CARD ————————————————————————————————————————————————————————————
+// ── ARTICLE CARD ──────────────────────────────────────────────────────────────
 
-function ArticleCard({ article, onClick }) {
+function ArticleCard({ article }) {
   const nicheColors = { SEO: 'green', PPC: 'brand', 'Social Media': 'teal', Analytics: 'teal', 'Content Marketing': 'neutral', 'Email Marketing': 'teal', 'Local SEO': 'accent', CRO: 'accent' };
   const tagColor = nicheColors[article.niche] || 'neutral';
   return (
-    <article className="article-card fade-in" onClick={() => onClick && onClick(article)} role="button" tabIndex={0} onKeyDown={e => e.key === 'Enter' && onClick && onClick(article)} aria-label={article.title}>
+    <a href={`/blog/${article.slug}`} className="article-card fade-in" aria-label={article.title} style={{ textDecoration: 'none', color: 'inherit', display: 'flex' }}>
       <ImgPlaceholder label={article.imageLabel} />
       <div className="article-card-body">
         <div className="article-card-meta">
@@ -167,15 +167,15 @@ function ArticleCard({ article, onClick }) {
           <span className="article-readtime">{article.readTime} read</span>
         </div>
       </div>
-    </article>
+    </a>
   );
 }
 
-// —— FEATURED ARTICLE CARD ————————————————————————————————————————————————————
+// ── FEATURED ARTICLE CARD ─────────────────────────────────────────────────────
 
-function ArticleCardFeatured({ article, onClick }) {
+function ArticleCardFeatured({ article }) {
   return (
-    <article className="article-card-featured" onClick={() => onClick && onClick(article)} role="button" tabIndex={0} onKeyDown={e => e.key === 'Enter' && onClick && onClick(article)}>
+    <a href={`/blog/${article.slug}`} className="article-card-featured" style={{ textDecoration: 'none', color: 'inherit' }}>
       <div className="article-card-featured-body">
         <div style={{ display: 'flex', gap: 8, marginBottom: 4 }}>
           <TagBadge label="Featured Guide" color="accent" />
@@ -191,23 +191,23 @@ function ArticleCardFeatured({ article, onClick }) {
           </div>
         </div>
         <div style={{ marginTop: 16 }}>
-          <button className="btn btn-primary" onClick={e => { e.stopPropagation(); onClick && onClick(article); }}>Read Guide</button>
+          <span className="btn btn-primary">Read Guide</span>
         </div>
       </div>
       <div className="article-card-featured-img">
         <div className="article-card-stripe"></div>
         <span className="article-card-img-label font-mono" style={{ position: 'relative', zIndex: 1 }}>{article.imageLabel}</span>
       </div>
-    </article>
+    </a>
   );
 }
 
-// —— RESOURCE CARD ————————————————————————————————————————————————————————————
+// ── RESOURCE CARD ─────────────────────────────────────────────────────────────
 
-function ResourceCard({ resource, onClick }) {
+function ResourceCard({ resource }) {
   const typeColors = { Template: 'var(--teal)', Checklist: 'var(--green)', Guide: 'var(--accent)', Tool: 'var(--brand)' };
   return (
-    <div className="resource-card" onClick={onClick} role="button" tabIndex={0}>
+    <a href="/resources" className="resource-card" style={{ textDecoration: 'none', color: 'inherit' }}>
       <div className="resource-card-type" style={{ color: typeColors[resource.type] || 'var(--teal)' }}>
         <div style={{ width: 5, height: 5, borderRadius: '50%', background: 'currentColor', flexShrink: 0 }}></div>
         {resource.type}
@@ -215,19 +215,19 @@ function ResourceCard({ resource, onClick }) {
       <h3 className="resource-card-title">{resource.title}</h3>
       <p className="resource-card-desc">{resource.desc}</p>
       <div style={{ marginTop: 'auto', paddingTop: 8 }}>
-        <button className="btn btn-secondary btn-sm" onClick={e => e.stopPropagation()}>
+        <span className="btn btn-secondary btn-sm">
           Download Free
-        </button>
+        </span>
       </div>
-    </div>
+    </a>
   );
 }
 
-// —— NICHE CARD ———————————————————————————————————————————————————————————————
+// ── NICHE CARD ────────────────────────────────────────────────────────────────
 
-function NicheCard({ niche, onClick }) {
+function NicheCard({ niche }) {
   return (
-    <div className="niche-card" onClick={onClick} role="button" tabIndex={0}>
+    <a href={`/niches/${niche.slug || niche.id}`} className="niche-card" style={{ textDecoration: 'none', color: 'inherit' }}>
       <div className="niche-card-icon" style={{ background: niche.color, color: 'white', fontFamily: 'var(--font-sans)', fontSize: 11, fontWeight: 800, letterSpacing: '0.02em' }}>
         {niche.abbr}
       </div>
@@ -238,7 +238,7 @@ function NicheCard({ niche, onClick }) {
       <div style={{ fontSize: 12, color: 'var(--text-3)', marginTop: 4 }}>
         Explore <span style={{ color: 'var(--accent)' }}>→</span>
       </div>
-    </div>
+    </a>
   );
 }
 

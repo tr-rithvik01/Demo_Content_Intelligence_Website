@@ -1,6 +1,6 @@
 // pages-other.jsx — NicheHub, Resources, About, Contact
 
-const { useState, useRef } = React;
+var { useState, useRef } = React;
 
 // —— NICHE HUB PAGE ———————————————————————————————————————————————————————————
 

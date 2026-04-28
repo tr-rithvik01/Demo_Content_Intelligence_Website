@@ -1,0 +1,165 @@
+---
+import fs from 'node:fs';
+import { SITE_URL } from '../lib/constants';
+
+interface Props {
+  path?: string;
+  noindex?: boolean;
+}
+
+const { path = '/', noindex = false } = Astro.props;
+
+const readText = (relativePath: string) => fs.readFileSync(new URL(relativePath, import.meta.url), 'utf8');
+
+const prototypeHtml = readText('../../index.html');
+const styleMatch = prototypeHtml.match(/<style>([\s\S]*?)<\/style>/i);
+const styleContent = styleMatch ? styleMatch[1] : '';
+
+const sharedScript = readText('../generated/prototype/shared.js');
+const navigationScript = readText('../generated/prototype/navigation.js');
+const homeScript = readText('../generated/prototype/pages-home.js');
+const contentScript = readText('../generated/prototype/pages-content.js');
+const otherScript = readText('../generated/prototype/pages-other.js');
+const appScript = readText('../generated/prototype/app.js');
+
+const routeMeta = (() => {
+  if (path === '/' || path === '/index.html') {
+    return {
+      title: 'The AI GTM Engineer',
+      description: 'Actionable growth marketing intelligence, frameworks, guides, and interactive experiences for marketers who measure everything.',
+      type: 'website',
+    };
+  }
+  if (path === '/blog') {
+    return {
+      title: 'Blog',
+      description: 'Browse growth marketing guides, channel playbooks, and GTM strategy articles across SEO, PPC, content, email, and analytics.',
+      type: 'website',
+    };
+  }
+  if (path.startsWith('/blog/')) {
+    return {
+      title: 'Article',
+      description: 'Read in-depth growth marketing analysis, frameworks, and implementation advice from the GTM Remixed prototype experience.',
+      type: 'article',
+    };
+  }
+  if (path.startsWith('/niches/')) {
+    return {
+      title: 'Marketing Channel',
+      description: 'Explore channel-specific growth marketing guidance, tools, and supporting resources.',
+      type: 'website',
+    };
+  }
+  if (path.startsWith('/industries/')) {
+    return {
+      title: 'Industry Playbook',
+      description: 'Explore industry-specific growth marketing playbooks, examples, and tactical frameworks.',
+      type: 'website',
+    };
+  }
+  if (path === '/resources') {
+    return {
+      title: 'Resources',
+      description: 'Browse free templates, checklists, and implementation resources for modern growth marketing teams.',
+      type: 'website',
+    };
+  }
+  if (path === '/about') {
+    return {
+      title: 'About',
+      description: 'Learn more about the GTM Remixed prototype, editorial direction, and the team behind the experience.',
+      type: 'website',
+    };
+  }
+  if (path === '/contact') {
+    return {
+      title: 'Contact',
+      description: 'Get in touch about the GTM Remixed prototype, partnerships, or project inquiries.',
+      type: 'website',
+    };
+  }
+  return {
+    title: 'Page Not Found',
+    description: 'The page you are looking for could not be found in the GTM Remixed prototype experience.',
+    type: 'website',
+  };
+})();
+
+const fullTitle = `${routeMeta.title} | GTM Remixed`;
+const canonical = new URL(path, SITE_URL).toString();
+const ogImage = new URL('/og-default.svg', SITE_URL).toString();
+---
+
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{fullTitle}</title>
+  <meta name="description" content={routeMeta.description} />
+  <link rel="canonical" href={canonical} />
+  {noindex && <meta name="robots" content="noindex,nofollow" />}
+  <meta property="og:type" content={routeMeta.type} />
+  <meta property="og:title" content={fullTitle} />
+  <meta property="og:description" content={routeMeta.description} />
+  <meta property="og:url" content={canonical} />
+  <meta property="og:image" content={ogImage} />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content={fullTitle} />
+  <meta name="twitter:description" content={routeMeta.description} />
+  <meta name="twitter:image" content={ogImage} />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet" />
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <style set:html={styleContent}></style>
+</head>
+<body>
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+  <div id="reading-progress" aria-hidden="true"></div>
+  <div id="root"></div>
+
+  <script is:inline>
+    (function () {
+      function showStartupError(message) {
+        var existing = document.getElementById('__startup_error__');
+        if (existing) return;
+        var pre = document.createElement('pre');
+        pre.id = '__startup_error__';
+        pre.textContent = message;
+        pre.style.position = 'fixed';
+        pre.style.inset = '16px';
+        pre.style.zIndex = '99999';
+        pre.style.padding = '16px';
+        pre.style.overflow = 'auto';
+        pre.style.whiteSpace = 'pre-wrap';
+        pre.style.borderRadius = '12px';
+        pre.style.background = '#1a0f12';
+        pre.style.color = '#ffd7df';
+        pre.style.border = '1px solid #7a2e3f';
+        pre.style.font = '12px/1.5 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace';
+        document.body.appendChild(pre);
+      }
+
+      window.addEventListener('error', function (event) {
+        var source = event.filename ? event.filename.split(/[\\/]/).pop() : 'inline';
+        showStartupError('Startup error in ' + source + ':' + (event.lineno || '?') + '\n\n' + event.message);
+      });
+
+      window.addEventListener('unhandledrejection', function (event) {
+        var reason = event.reason && (event.reason.stack || event.reason.message || String(event.reason));
+        showStartupError('Unhandled promise rejection\n\n' + (reason || 'Unknown error'));
+      });
+    })();
+  </script>
+
+  <script set:html={sharedScript}></script>
+  <script set:html={navigationScript}></script>
+  <script set:html={homeScript}></script>
+  <script set:html={contentScript}></script>
+  <script set:html={otherScript}></script>
+  <script set:html={appScript}></script>
+</body>
+</html>

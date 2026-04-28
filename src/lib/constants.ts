@@ -1,8 +1,8 @@
-export const SITE_NAME = 'GrowthMarketing Hub';
+export const SITE_NAME = 'GTM Remixed';
 export const SITE_URL = 'https://growthmarketinghub.com';
-export const SITE_DESCRIPTION = 'The one-stop hub for growth marketing news, guides, case studies, and actionable strategies across every channel and industry.';
-export const SITE_TWITTER = '@GrowthMktHub';
-export const SITE_OG_IMAGE = '/og-default.png';
+export const SITE_DESCRIPTION = 'Actionable growth marketing intelligence, frameworks, guides, and interactive experiences for marketers who measure everything.';
+export const SITE_TWITTER = '@GTMRemixed';
+export const SITE_OG_IMAGE = '/og-default.svg';
 
 export const NICHES = [
   { slug: 'seo', label: 'SEO', icon: '🔍', color: 'blue', description: 'Technical, on-page, off-page & local SEO strategies.' },

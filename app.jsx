@@ -1,6 +1,75 @@
 // app.jsx — App shell: routing, dark mode, theme persistence
 
-const { useState, useEffect } = React;
+var { useState, useEffect } = React;
+
+const ROUTE_PATHS = {
+  home: '/',
+  blog: '/blog',
+  resources: '/resources',
+  about: '/about',
+  contact: '/contact',
+};
+
+function getNichePath(niche) {
+  return `/niches/${niche?.slug || niche?.id || 'seo'}`;
+}
+
+function getIndustryPath(industry) {
+  return `/industries/${industry?.slug || industry?.id || 'saas'}`;
+}
+
+function buildPrototypePath(page, data = null) {
+  switch (page) {
+    case 'home':
+      return ROUTE_PATHS.home;
+    case 'blog':
+      return ROUTE_PATHS.blog;
+    case 'article':
+      return data?.slug ? `/blog/${data.slug}` : ROUTE_PATHS.blog;
+    case 'niche':
+      if (!data) return '/niches/seo';
+      if (NICHES.some(n => n.id === data.id)) return getNichePath(data);
+      if (INDUSTRIES.some(ind => ind.id === data.id)) return getIndustryPath(data);
+      return ROUTE_PATHS.home;
+    case 'resources':
+      return ROUTE_PATHS.resources;
+    case 'about':
+      return ROUTE_PATHS.about;
+    case 'contact':
+      return ROUTE_PATHS.contact;
+    default:
+      return ROUTE_PATHS.home;
+  }
+}
+
+function resolvePrototypeRoute(pathname) {
+  const cleanPath = pathname.replace(/\/+$/, '') || '/';
+  if (cleanPath === '/' || cleanPath === '/index.html') return { page: 'home', data: null, path: '/' };
+  if (cleanPath === '/blog') return { page: 'blog', data: null, path: cleanPath };
+  if (cleanPath === '/resources') return { page: 'resources', data: null, path: cleanPath };
+  if (cleanPath === '/about') return { page: 'about', data: null, path: cleanPath };
+  if (cleanPath === '/contact') return { page: 'contact', data: null, path: cleanPath };
+
+  const articleMatch = cleanPath.match(/^\/blog\/([^/]+)$/);
+  if (articleMatch) {
+    const article = ARTICLES.find(a => a.slug === articleMatch[1]) || ARTICLES[0];
+    return { page: 'article', data: article, path: cleanPath };
+  }
+
+  const nicheMatch = cleanPath.match(/^\/niches\/([^/]+)$/);
+  if (nicheMatch) {
+    const niche = NICHES.find(n => n.slug === nicheMatch[1] || n.id === nicheMatch[1]) || NICHES[0];
+    return { page: 'niche', data: niche, path: cleanPath };
+  }
+
+  const industryMatch = cleanPath.match(/^\/industries\/([^/]+)$/);
+  if (industryMatch) {
+    const industry = INDUSTRIES.find(ind => ind.slug === industryMatch[1] || ind.id === industryMatch[1]) || INDUSTRIES[0];
+    return { page: 'niche', data: industry, path: cleanPath };
+  }
+
+  return { page: 'home', data: null, path: cleanPath };
+}
 
 function App() {
   // ── THEME ────────────────────────────────────────────────────────────────
@@ -18,12 +87,24 @@ function App() {
   const toggleTheme = () => setTheme(t => t === 'light' ? 'dark' : 'light');
 
   // ── ROUTING ───────────────────────────────────────────────────────────────
-  // Stack: each entry is { page, data }
-  const [navStack, setNavStack] = useState([{ page: 'home', data: null }]);
-  const current = navStack[navStack.length - 1];
+  const [route, setRoute] = useState(() => resolvePrototypeRoute(window.location.pathname));
+  const current = route;
 
-  const navigate = (page, data = null) => {
-    setNavStack(s => [...s, { page, data }]);
+  useEffect(() => {
+    const onPopState = () => setRoute(resolvePrototypeRoute(window.location.pathname));
+    window.addEventListener('popstate', onPopState);
+    return () => window.removeEventListener('popstate', onPopState);
+  }, []);
+
+  const navigate = (page, data = null, options = {}) => {
+    const path = buildPrototypePath(page, data);
+    const nextRoute = { page, data, path };
+    if (options.replace) {
+      window.history.replaceState({ page, path }, '', path);
+    } else {
+      window.history.pushState({ page, path }, '', path);
+    }
+    setRoute(nextRoute);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -98,14 +179,20 @@ function App() {
 
   return (
     <div>
-      <NavBar currentPage={current.page} onNavigate={navigate} theme={theme} onToggleTheme={toggleTheme} />
+      <NavBar currentPage={current.path} onNavigate={navigate} theme={theme} onToggleTheme={toggleTheme} />
       {renderPage()}
       <Footer onNavigate={navigate} />
 
       {/* Back button (when not on home) */}
-      {navStack.length > 1 && (
+      {current.path !== '/' && (
         <button
-          onClick={() => { setNavStack(s => s.slice(0, -1)); window.scrollTo({ top: 0 }); }}
+          onClick={() => {
+            if (window.history.length > 1) {
+              window.history.back();
+            } else {
+              navigate('home', null, { replace: true });
+            }
+          }}
           style={{
             position: 'fixed', bottom: 24, left: 24, zIndex: 500,
             background: 'var(--bg)', border: '1px solid var(--border)',

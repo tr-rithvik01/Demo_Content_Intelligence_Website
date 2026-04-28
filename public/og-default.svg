@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" fill="none">
+  <rect width="1200" height="630" fill="#0b1020"/>
+  <rect x="72" y="72" width="1056" height="486" rx="32" fill="url(#panel)"/>
+  <rect x="120" y="120" width="84" height="84" rx="20" fill="#e05a35"/>
+  <path d="M137 177 155 154l14 14 24-34" stroke="#fff" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="230" y="172" fill="#f8fafc" font-family="Plus Jakarta Sans, Arial, sans-serif" font-size="52" font-weight="800">GTM Remixed</text>
+  <text x="120" y="286" fill="#f8fafc" font-family="Plus Jakarta Sans, Arial, sans-serif" font-size="72" font-weight="800">Marketing intelligence</text>
+  <text x="120" y="368" fill="#f8fafc" font-family="Plus Jakarta Sans, Arial, sans-serif" font-size="72" font-weight="800">for people who measure</text>
+  <text x="120" y="450" fill="#ff9d78" font-family="Lora, Georgia, serif" font-size="78" font-style="italic" font-weight="700">everything.</text>
+  <text x="120" y="520" fill="#94a3b8" font-family="Plus Jakarta Sans, Arial, sans-serif" font-size="28" font-weight="600">Guides, tools, playbooks, and interactive growth marketing experiences.</text>
+  <defs>
+    <linearGradient id="panel" x1="72" y1="72" x2="1128" y2="558" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#121a31"/>
+      <stop offset="1" stop-color="#1a2140"/>
+    </linearGradient>
+  </defs>
+</svg>

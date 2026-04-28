@@ -1,6 +1,6 @@
 // navigation.jsx — NavBar with full-width mega menus, search overlay, dark mode + Footer
 
-const { useState, useEffect, useRef } = React;
+var { useState, useEffect, useRef } = React;
 
 // ── CHANNEL SVG ILLUSTRATIONS ─────────────────────────────────────────────────
 
@@ -618,7 +618,7 @@ function ResourcesMegaMenu({ open, onNavigate, onClose, stayOpen, closeMenu }) {
 
 // ── NAVBAR ────────────────────────────────────────────────────────────────────
 
-function NavBar({ currentPage, onNavigate, theme, onToggleTheme }) {
+function NavBar({ currentPage, theme, onToggleTheme }) {
   const [megaMenu, setMegaMenu] = useState(null);
   const [searchOpen, setSearchOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -644,7 +644,7 @@ function NavBar({ currentPage, onNavigate, theme, onToggleTheme }) {
   const stayOpen = () => clearTimeout(closeTimer.current);
   const closeNow = () => { clearTimeout(closeTimer.current); setMegaMenu(null); };
 
-  const sharedMenuProps = { onNavigate, onClose: closeNow, stayOpen, closeMenu };
+  const sharedMenuProps = { onClose: closeNow, stayOpen, closeMenu };
 
   return (
     <>
@@ -659,7 +659,7 @@ function NavBar({ currentPage, onNavigate, theme, onToggleTheme }) {
       <nav className={`navbar${scrolled ? ' scrolled' : ''}`} role="navigation" aria-label="Main navigation" style={{ position: 'sticky', top: 0, zIndex: 900 }}>
         <div className="navbar-inner">
           {/* Logo */}
-          <a className="navbar-logo" href="#" onClick={e => { e.preventDefault(); onNavigate('home'); }} aria-label="GTM Remixed home">
+          <a className="navbar-logo" href="/" aria-label="The AI GTM Engineer home">
             <div className="navbar-logo-mark" aria-hidden="true">
               <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 12L6 7l3 3 5-7" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
             </div>
@@ -683,21 +683,21 @@ function NavBar({ currentPage, onNavigate, theme, onToggleTheme }) {
               </div>
             </div>
 
-            <div className="nav-item" onMouseEnter={() => openMenu('blog')} onMouseLeave={closeMenu}>
-              <div className={`nav-link${megaMenu === 'blog' || currentPage === 'blog' ? ' open active' : ''}`} role="button" aria-haspopup="true" aria-expanded={megaMenu === 'blog'} tabIndex={0}>
+            <a href="/blog" className="nav-item" onMouseEnter={() => openMenu('blog')} onMouseLeave={closeMenu} style={{textDecoration:'none'}}>
+              <div className={`nav-link${megaMenu === 'blog' || currentPage === '/blog' ? ' open active' : ''}`} role="button" aria-haspopup="true" aria-expanded={megaMenu === 'blog'}>
                 Blog
                 <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M2 4l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
               </div>
-            </div>
+            </a>
 
-            <div className="nav-item" onMouseEnter={() => openMenu('resources')} onMouseLeave={closeMenu}>
-              <div className={`nav-link${megaMenu === 'resources' || currentPage === 'resources' ? ' open active' : ''}`} role="button" aria-haspopup="true" aria-expanded={megaMenu === 'resources'} tabIndex={0}>
+            <a href="/resources" className="nav-item" onMouseEnter={() => openMenu('resources')} onMouseLeave={closeMenu} style={{textDecoration:'none'}}>
+              <div className={`nav-link${megaMenu === 'resources' || currentPage === '/resources' ? ' open active' : ''}`} role="button" aria-haspopup="true" aria-expanded={megaMenu === 'resources'}>
                 Resources
                 <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M2 4l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
               </div>
-            </div>
+            </a>
 
-            <div className={`nav-link${currentPage === 'about' ? ' active' : ''}`} role="button" tabIndex={0} onClick={() => { closeNow(); onNavigate('about'); }}>About</div>
+            <a href="/about" className={`nav-link${currentPage === '/about' ? ' active' : ''}`}>About</a>
 
           </div>
 
@@ -712,9 +712,9 @@ function NavBar({ currentPage, onNavigate, theme, onToggleTheme }) {
                 : <svg width="17" height="17" viewBox="0 0 17 17" fill="none"><path d="M14.5 10.5A6.5 6.5 0 0 1 6.5 2.5a6.5 6.5 0 1 0 8 8z" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg>
               }
             </button>
-            <button className="btn btn-primary btn-sm" onClick={() => { closeNow(); onNavigate('contact'); }} style={{ marginLeft: 4 }}>
+            <a href="/contact" className="btn btn-primary btn-sm" onClick={closeNow} style={{ marginLeft: 4, textDecoration: 'none' }}>
               Get in Touch
-            </button>
+            </a>
           </div>
         </div>
       </nav>
@@ -724,7 +724,7 @@ function NavBar({ currentPage, onNavigate, theme, onToggleTheme }) {
 
 // ── FOOTER ────────────────────────────────────────────────────────────────────
 
-function Footer({ onNavigate }) {
+function Footer() {
   return (
     <footer className="footer" role="contentinfo">
       <div className="container">
@@ -746,21 +746,21 @@ function Footer({ onNavigate }) {
           <div>
             <div className="footer-col-title">Channels</div>
             {NICHES.slice(0, 5).map(n => (
-              <a key={n.id} className="footer-link" href="#" onClick={e => { e.preventDefault(); onNavigate('niche', n); }}>{n.name}</a>
+              <a key={n.id} className="footer-link" href={`/niches/${n.slug || n.id}`}>{n.name}</a>
             ))}
-            <a className="footer-link" href="#" onClick={e => { e.preventDefault(); onNavigate('blog'); }}>View all →</a>
+            <a className="footer-link" href="/blog">View all →</a>
           </div>
           <div>
             <div className="footer-col-title">Industries</div>
             {INDUSTRIES.slice(0, 5).map(n => (
-              <a key={n.id} className="footer-link" href="#" onClick={e => { e.preventDefault(); onNavigate('niche', n); }}>{n.name}</a>
+              <a key={n.id} className="footer-link" href={`/industries/${n.slug || n.id}`}>{n.name}</a>
             ))}
-            <a className="footer-link" href="#" onClick={e => { e.preventDefault(); onNavigate('blog'); }}>View all →</a>
+            <a className="footer-link" href="/blog">View all →</a>
           </div>
           <div>
             <div className="footer-col-title">Company</div>
             {[['about','About'],['resources','Resources'],['contact','Contact'],['contact','Write for Us'],['contact','Advertise']].map(([page, label]) => (
-              <a key={label} className="footer-link" href="#" onClick={e => { e.preventDefault(); onNavigate(page); }}>{label}</a>
+              <a key={label} className="footer-link" href={`/${page}`}>{label}</a>
             ))}
           </div>
         </div>
