@@ -1,0 +1,12 @@
+---
+import PrototypeDocument from '../../layouts/PrototypeDocument.astro';
+import { NICHES } from '../../../shared.jsx';
+
+export function getStaticPaths() {
+  return NICHES.map(niche => ({
+    params: { niche: niche.slug || niche.id }
+  }));
+}
+---
+
+<PrototypeDocument path={`/niches/${Astro.params.niche}`} />

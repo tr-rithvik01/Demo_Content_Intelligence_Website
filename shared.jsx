@@ -1,10 +1,11 @@
 // shared.jsx — Utility components, cards, buttons, callouts
 
-var { useState, useEffect, useRef, useCallback } = React;
+// Safely mock React for the Node.js build step
+var { useState, useEffect, useRef, useCallback } = typeof React !== 'undefined' ? React : {};
 
 // —— DATA ————————————————————————————————————————————————————————————————————
 
-const NICHES = [
+export const NICHES = [
   { id: 'seo',      slug: 'seo',               name: 'SEO',               abbr: 'SE',  color: 'oklch(0.38 0.10 160)', bg: 'oklch(0.93 0.04 160)', count: 48 },
   { id: 'ppc',      slug: 'ppc',               name: 'PPC',               abbr: 'PP',  color: 'oklch(0.35 0.09 250)', bg: 'oklch(0.92 0.03 250)', count: 36 },
   { id: 'social',   slug: 'social-media',      name: 'Social Media',      abbr: 'SM',  color: 'oklch(0.40 0.12 290)', bg: 'oklch(0.93 0.03 290)', count: 29 },
@@ -15,7 +16,7 @@ const NICHES = [
   { id: 'cro',      slug: 'cro',               name: 'CRO',               abbr: 'CR',  color: 'oklch(0.42 0.12 55)',  bg: 'oklch(0.94 0.03 55)',  count: 19 },
 ];
 
-const INDUSTRIES = [
+export const INDUSTRIES = [
   { id: 'saas',         slug: 'saas',                  name: 'SaaS',                  abbr: 'SaaS', count: 38 },
   { id: 'ecommerce',    slug: 'ecommerce',             name: 'E-commerce',            abbr: 'EC',   count: 42 },
   { id: 'realestate',   slug: 'real-estate',           name: 'Real Estate',           abbr: 'RE',   count: 24 },
@@ -26,7 +27,7 @@ const INDUSTRIES = [
   { id: 'hospitality',  slug: 'hospitality',           name: 'Hospitality',           abbr: 'HO',   count: 14 },
 ];
 
-const ARTICLES = [
+export const ARTICLES = [
   {
     id: 1, slug: 'technical-seo-checklist-2026',
     title: 'The 2026 Technical SEO Checklist: 47 Checks That Actually Move the Needle',
@@ -102,7 +103,7 @@ const ARTICLES = [
   },
 ];
 
-const RESOURCES = [
+export const RESOURCES = [
   { id: 1, title: 'Technical SEO Audit Template', type: 'Template', desc: 'A 47-point spreadsheet covering crawlability, Core Web Vitals, structured data, and indexation — with severity scoring built in.', teal: true },
   { id: 2, title: 'Content Brief Framework', type: 'Template', desc: 'The brief structure we use for every article we produce. Includes SERP analysis prompts, entity extraction, and heading hierarchy guidance.', teal: false },
   { id: 3, title: 'PPC Account Structure Checklist', type: 'Checklist', desc: 'Before launching any Google Ads campaign, run through these 34 structural checks to avoid the most expensive beginner mistakes.', teal: true },
@@ -454,10 +455,13 @@ function AppearSection({ children, style }) {
 
 // —— EXPORTS ——————————————————————————————————————————————————————————————————
 
-Object.assign(window, {
-  NICHES, INDUSTRIES, ARTICLES, RESOURCES,
-  Button, TagBadge, ImgPlaceholder,
-  ArticleCard, ArticleCardFeatured, ResourceCard, NicheCard,
-  CalloutBox, NewsletterSignup, ReadingProgress,
-  CodeBlock, ShareBar, FAQItem, AppearSection,
-});
+// Only assign to window in the browser, not during the Astro build
+if (typeof window !== 'undefined') {
+  Object.assign(window, {
+    NICHES, INDUSTRIES, ARTICLES, RESOURCES,
+    Button, TagBadge, ImgPlaceholder,
+    ArticleCard, ArticleCardFeatured, ResourceCard, NicheCard,
+    CalloutBox, NewsletterSignup, ReadingProgress,
+    CodeBlock, ShareBar, FAQItem, AppearSection,
+  });
+}

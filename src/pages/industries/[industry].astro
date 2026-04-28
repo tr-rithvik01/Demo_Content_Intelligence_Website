@@ -1,0 +1,12 @@
+---
+import PrototypeDocument from '../../layouts/PrototypeDocument.astro';
+import { INDUSTRIES } from '../../../shared.jsx';
+
+export function getStaticPaths() {
+  return INDUSTRIES.map(ind => ({
+    params: { industry: ind.slug || ind.id }
+  }));
+}
+---
+
+<PrototypeDocument path={`/industries/${Astro.params.industry}`} />

@@ -1,0 +1,12 @@
+---
+import PrototypeDocument from '../../layouts/PrototypeDocument.astro';
+import { ARTICLES } from '../../../shared.jsx';
+
+export function getStaticPaths() {
+  return ARTICLES.map(article => ({
+    params: { slug: article.slug }
+  }));
+}
+---
+
+<PrototypeDocument path={`/blog/${Astro.params.slug}`} />
