@@ -1,6 +1,12 @@
 ---
-import fs from 'node:fs';
+import sharedUrl from '../generated/prototype/shared.js?url';
+import navigationUrl from '../generated/prototype/navigation.js?url';
+import homeUrl from '../generated/prototype/pages-home.js?url';
+import contentUrl from '../generated/prototype/pages-content.js?url';
+import otherUrl from '../generated/prototype/pages-other.js?url';
+import appUrl from '../generated/prototype/app.js?url';
 import { SITE_URL } from '../lib/constants';
+import '../styles/prototype.css';
 
 interface Props {
   path?: string;
@@ -8,19 +14,6 @@ interface Props {
 }
 
 const { path = '/', noindex = false } = Astro.props;
-
-const readText = (relativePath: string) => fs.readFileSync(new URL(relativePath, import.meta.url), 'utf8');
-
-const prototypeHtml = readText('../../index.html');
-const styleMatch = prototypeHtml.match(/<style>([\s\S]*?)<\/style>/i);
-const styleContent = styleMatch ? styleMatch[1] : '';
-
-const sharedScript = readText('../generated/prototype/shared.js');
-const navigationScript = readText('../generated/prototype/navigation.js');
-const homeScript = readText('../generated/prototype/pages-home.js');
-const contentScript = readText('../generated/prototype/pages-content.js');
-const otherScript = readText('../generated/prototype/pages-other.js');
-const appScript = readText('../generated/prototype/app.js');
 
 const routeMeta = (() => {
   if (path === '/' || path === '/index.html') {
@@ -114,7 +107,6 @@ const ogImage = new URL('/og-default.svg', SITE_URL).toString();
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet" />
   <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-  <style set:html={styleContent}></style>
 </head>
 <body>
   <a href="#main-content" class="skip-link">Skip to main content</a>
@@ -155,11 +147,11 @@ const ogImage = new URL('/og-default.svg', SITE_URL).toString();
     })();
   </script>
 
-  <script set:html={sharedScript}></script>
-  <script set:html={navigationScript}></script>
-  <script set:html={homeScript}></script>
-  <script set:html={contentScript}></script>
-  <script set:html={otherScript}></script>
-  <script set:html={appScript}></script>
+  <script src={sharedUrl} defer></script>
+  <script src={navigationUrl} defer></script>
+  <script src={homeUrl} defer></script>
+  <script src={contentUrl} defer></script>
+  <script src={otherUrl} defer></script>
+  <script src={appUrl} defer></script>
 </body>
 </html>
