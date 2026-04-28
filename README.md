@@ -1,4 +1,3 @@
-tester
 # GrowthMarketing Hub
 
 Production-ready growth marketing resource website built with Astro 5, Tailwind CSS v4, and deployed on Cloudflare Pages.
@@ -254,4 +253,3 @@ npx wrangler pages dev dist
 | Professional Services | Underserved; high per-client value drives willingness to invest in marketing |
 | Logistics & Supply Chain | B2B niche with growing digital marketing adoption |
 | Hospitality & Travel | Direct bookings vs OTA dependency is a perennial hot-button topic |
-a302323 (Initial commit)

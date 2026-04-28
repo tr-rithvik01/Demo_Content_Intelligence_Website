@@ -1,6 +1,6 @@
 backend:
   name: github
-  repo: YOUR_GITHUB_USERNAME/YOUR_REPO_NAME  # e.g. acme/growthmarketinghub
+  repo: https://github.com/tr-rithvik01/Demo_Content_Intelligence_Website  # e.g. acme/growthmarketinghub
   branch: main
   base_url: https://growthmarketinghub.com
   auth_endpoint: api/auth
